@@ -74,8 +74,13 @@ export function createGame() {
     return { world, player, king, merchant };
 }
 
-// CLI에서 직접 실행 시
-if (typeof require !== 'undefined' && require.main === module) {
+// CLI에서 직접 실행 시 (Node.js 환경)
+// @ts-ignore
+declare const require: any;
+// @ts-ignore
+declare const module: any;
+
+if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
     console.log('MathWorld 엔진 초기화...');
     const { world, player } = createGame();
     console.log('세계 상태:', world.snapshot());

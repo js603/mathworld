@@ -45,6 +45,12 @@
         "src/**/*.ts",
         "../src/**/*.ts"
     ],
+    "exclude": [
+        "../src/game_cli.ts",
+        "../src/game/SaveSystem.ts",
+        "../src/demo.ts",
+        "../src/demo_analysis.ts"
+    ],
     "references": [
         {
             "path": "./tsconfig.node.json"
