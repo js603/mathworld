@@ -1,0 +1,169 @@
+[
+    {
+        "id": "talk_friendly",
+        "name": "우호적 대화",
+        "category": "dialogue",
+        "conditions": [],
+        "effects": [
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": 0.05
+            }
+        ],
+        "baseSuccessRate": 0.9,
+        "weights": {
+            "selfBenefit": 0.3,
+            "targetBenefit": 0.5,
+            "riskFactor": 0.1
+        }
+    },
+    {
+        "id": "threaten",
+        "name": "위협",
+        "category": "dialogue",
+        "conditions": [
+            {
+                "type": "stat",
+                "field": "power",
+                "operator": ">=",
+                "value": 5
+            }
+        ],
+        "effects": [
+            {
+                "type": "relation",
+                "field": "fear",
+                "change": 0.2
+            },
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": -0.1
+            }
+        ],
+        "baseSuccessRate": 0.7,
+        "weights": {
+            "selfBenefit": 0.7,
+            "targetBenefit": -0.5,
+            "riskFactor": 0.5
+        }
+    },
+    {
+        "id": "trade",
+        "name": "거래",
+        "category": "economic",
+        "conditions": [
+            {
+                "type": "resource",
+                "operator": ">=",
+                "value": 10
+            }
+        ],
+        "effects": [
+            {
+                "type": "resource",
+                "change": -10
+            },
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": 0.03
+            }
+        ],
+        "baseSuccessRate": 0.95,
+        "weights": {
+            "selfBenefit": 0.4,
+            "targetBenefit": 0.4,
+            "riskFactor": 0.2
+        }
+    },
+    {
+        "id": "attack",
+        "name": "공격",
+        "category": "combat",
+        "conditions": [],
+        "effects": [
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": -0.5
+            },
+            {
+                "type": "relation",
+                "field": "fear",
+                "change": 0.3
+            }
+        ],
+        "baseSuccessRate": 0.6,
+        "weights": {
+            "selfBenefit": 0.8,
+            "targetBenefit": -1.0,
+            "riskFactor": 0.8
+        }
+    },
+    {
+        "id": "help",
+        "name": "도움 제공",
+        "category": "social",
+        "conditions": [
+            {
+                "type": "resource",
+                "operator": ">=",
+                "value": 20
+            }
+        ],
+        "effects": [
+            {
+                "type": "resource",
+                "change": -20
+            },
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": 0.15
+            },
+            {
+                "type": "relation",
+                "field": "debt",
+                "change": 20
+            }
+        ],
+        "baseSuccessRate": 1.0,
+        "weights": {
+            "selfBenefit": 0.2,
+            "targetBenefit": 0.8,
+            "riskFactor": 0.1
+        }
+    },
+    {
+        "id": "betray",
+        "name": "배신",
+        "category": "social",
+        "conditions": [
+            {
+                "type": "relation",
+                "field": "trust",
+                "operator": ">",
+                "value": 0
+            }
+        ],
+        "effects": [
+            {
+                "type": "resource",
+                "change": 50
+            },
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": -0.8
+            }
+        ],
+        "baseSuccessRate": 0.5,
+        "weights": {
+            "selfBenefit": 1.0,
+            "targetBenefit": -1.0,
+            "riskFactor": 1.0
+        }
+    }
+]

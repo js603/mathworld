@@ -1,0 +1,95 @@
+[
+    {
+        "id": "power_challenge",
+        "name": "권력 도전",
+        "conditions": [
+            {
+                "type": "power_gap",
+                "threshold": 0.7
+            }
+        ],
+        "probability": 0.1,
+        "effects": [
+            {
+                "type": "instability",
+                "change": 0.1
+            }
+        ]
+    },
+    {
+        "id": "betrayal_plot",
+        "name": "배신 음모",
+        "conditions": [
+            {
+                "type": "trust_low",
+                "threshold": -0.3
+            },
+            {
+                "type": "ambition_high",
+                "threshold": 0.7
+            }
+        ],
+        "probability": 0.05,
+        "effects": [
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": -0.3
+            }
+        ]
+    },
+    {
+        "id": "alliance_formation",
+        "name": "동맹 형성",
+        "conditions": [
+            {
+                "type": "trust_high",
+                "threshold": 0.5
+            }
+        ],
+        "probability": 0.15,
+        "effects": [
+            {
+                "type": "relation",
+                "field": "trust",
+                "change": 0.2
+            }
+        ]
+    },
+    {
+        "id": "economic_crisis",
+        "name": "경제 위기",
+        "conditions": [
+            {
+                "type": "economy_low",
+                "threshold": 0.7
+            }
+        ],
+        "probability": 0.2,
+        "effects": [
+            {
+                "type": "global",
+                "field": "economyIndex",
+                "change": -0.1
+            }
+        ]
+    },
+    {
+        "id": "plague_outbreak",
+        "name": "역병 발생",
+        "conditions": [
+            {
+                "type": "stability_low",
+                "threshold": 0.3
+            }
+        ],
+        "probability": 0.02,
+        "effects": [
+            {
+                "type": "global",
+                "field": "plagueActive",
+                "change": true
+            }
+        ]
+    }
+]

@@ -1,0 +1,62 @@
+[
+    {
+        "id": "king",
+        "name": "왕",
+        "title": "아르테미스 왕",
+        "location": "capital",
+        "personality": {
+            "ambition": 0.7,
+            "loyalty": 0.6,
+            "morality": 0.6,
+            "courage": 0.7,
+            "cunning": 0.5
+        },
+        "power": 100,
+        "resources": 10000
+    },
+    {
+        "id": "merchant",
+        "name": "마르코",
+        "title": "대상인",
+        "location": "capital",
+        "personality": {
+            "ambition": 0.8,
+            "loyalty": 0.4,
+            "morality": 0.5,
+            "courage": 0.3,
+            "cunning": 0.8
+        },
+        "power": 30,
+        "resources": 5000
+    },
+    {
+        "id": "soldier",
+        "name": "가렛",
+        "title": "근위대장",
+        "location": "castle",
+        "personality": {
+            "ambition": 0.4,
+            "loyalty": 0.8,
+            "morality": 0.5,
+            "courage": 0.9,
+            "cunning": 0.3
+        },
+        "power": 50,
+        "resources": 500
+    },
+    {
+        "id": "spy",
+        "name": "그림자",
+        "title": "정보상",
+        "location": "capital",
+        "personality": {
+            "ambition": 0.6,
+            "loyalty": 0.2,
+            "morality": 0.3,
+            "courage": 0.4,
+            "cunning": 0.9
+        },
+        "power": 20,
+        "resources": 1000
+    }
+]

@@ -1,0 +1,33 @@
+{
+  "name": "mathworld",
+  "version": "0.1.0",
+  "description": "Text-based MMO RPG with mathematical world simulation",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "demo": "ts-node src/demo.ts",
+    "play": "ts-node src/game_cli.ts",
+    "analyze": "ts-node src/demo_analysis.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:integration": "jest --testPathPattern=integration"
+  },
+  "keywords": [
+    "rpg",
+    "text-game",
+    "simulation",
+    "mmo"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.3.0"
+  }
+}

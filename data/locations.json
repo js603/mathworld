@@ -1,0 +1,74 @@
+[
+    {
+        "id": "capital",
+        "name": "왕도",
+        "type": "city",
+        "resources": 1000,
+        "population": 50000,
+        "stability": 0.8,
+        "connectedTo": [
+            "village1",
+            "castle",
+            "port"
+        ],
+        "owner": "king"
+    },
+    {
+        "id": "castle",
+        "name": "왕성",
+        "type": "castle",
+        "resources": 500,
+        "population": 500,
+        "stability": 0.95,
+        "connectedTo": [
+            "capital"
+        ],
+        "owner": "king"
+    },
+    {
+        "id": "village1",
+        "name": "변방 마을",
+        "type": "village",
+        "resources": 200,
+        "population": 500,
+        "stability": 0.6,
+        "connectedTo": [
+            "capital",
+            "wilderness"
+        ]
+    },
+    {
+        "id": "port",
+        "name": "항구 도시",
+        "type": "city",
+        "resources": 800,
+        "population": 20000,
+        "stability": 0.7,
+        "connectedTo": [
+            "capital"
+        ]
+    },
+    {
+        "id": "wilderness",
+        "name": "황야",
+        "type": "wilderness",
+        "resources": 50,
+        "population": 0,
+        "stability": 0.3,
+        "connectedTo": [
+            "village1",
+            "dungeon"
+        ]
+    },
+    {
+        "id": "dungeon",
+        "name": "버려진 던전",
+        "type": "dungeon",
+        "resources": 300,
+        "population": 0,
+        "stability": 0.1,
+        "connectedTo": [
+            "wilderness"
+        ]
+    }
+]
