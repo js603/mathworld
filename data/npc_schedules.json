@@ -1,0 +1,74 @@
+{
+    "blacksmith": {
+        "morning": "village1",
+        "afternoon": "village1",
+        "evening": "capital",
+        "night": "village1"
+    },
+    "healer": {
+        "morning": "village1",
+        "afternoon": "village1",
+        "evening": "village1",
+        "night": "village1"
+    },
+    "thief": {
+        "morning": "port",
+        "afternoon": "capital",
+        "evening": "port",
+        "night": "dungeon"
+    },
+    "scholar": {
+        "morning": "capital",
+        "afternoon": "shrine",
+        "evening": "capital",
+        "night": "capital"
+    },
+    "innkeeper": {
+        "morning": "port",
+        "afternoon": "port",
+        "evening": "port",
+        "night": "port"
+    },
+    "noble": {
+        "morning": "castle",
+        "afternoon": "capital",
+        "evening": "castle",
+        "night": "castle"
+    },
+    "assassin": {
+        "morning": "dungeon",
+        "afternoon": "forest",
+        "evening": "capital",
+        "night": "dungeon"
+    },
+    "priest": {
+        "morning": "shrine",
+        "afternoon": "capital",
+        "evening": "shrine",
+        "night": "shrine"
+    },
+    "king": {
+        "morning": "castle",
+        "afternoon": "capital",
+        "evening": "castle",
+        "night": "castle"
+    },
+    "merchant": {
+        "morning": "port",
+        "afternoon": "capital",
+        "evening": "port",
+        "night": "port"
+    },
+    "soldier": {
+        "morning": "castle",
+        "afternoon": "capital",
+        "evening": "castle",
+        "night": "castle"
+    },
+    "spy": {
+        "morning": "capital",
+        "afternoon": "port",
+        "evening": "capital",
+        "night": "forest"
+    }
+}

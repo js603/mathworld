@@ -1,0 +1,199 @@
+[
+    {
+        "id": "basic_attack",
+        "name": "기본 공격",
+        "type": "attack",
+        "description": "기본적인 근접 공격.",
+        "baseDamage": 100,
+        "mpCost": 0,
+        "cooldown": 0,
+        "requiredLevel": 1,
+        "level": 1
+    },
+    {
+        "id": "power_strike",
+        "name": "강타",
+        "type": "attack",
+        "description": "강력한 일격을 가한다.",
+        "baseDamage": 150,
+        "mpCost": 10,
+        "cooldown": 2,
+        "requiredLevel": 1,
+        "level": 1
+    },
+    {
+        "id": "double_slash",
+        "name": "이중 베기",
+        "type": "attack",
+        "description": "빠르게 두 번 베어낸다.",
+        "baseDamage": 120,
+        "mpCost": 8,
+        "cooldown": 1,
+        "requiredLevel": 3,
+        "level": 1
+    },
+    {
+        "id": "critical_edge",
+        "name": "치명적 일격",
+        "type": "attack",
+        "description": "치명타 확률이 높은 공격.",
+        "baseDamage": 130,
+        "mpCost": 15,
+        "cooldown": 3,
+        "requiredLevel": 5,
+        "level": 1,
+        "bonusCritRate": 0.3
+    },
+    {
+        "id": "whirlwind",
+        "name": "회오리 베기",
+        "type": "attack",
+        "description": "주변 모든 적을 공격한다.",
+        "baseDamage": 80,
+        "mpCost": 20,
+        "cooldown": 4,
+        "requiredLevel": 7,
+        "level": 1,
+        "isAoe": true
+    },
+    {
+        "id": "heal",
+        "name": "치유",
+        "type": "heal",
+        "description": "체력을 회복한다.",
+        "healAmount": 50,
+        "mpCost": 15,
+        "cooldown": 2,
+        "requiredLevel": 2,
+        "level": 1
+    },
+    {
+        "id": "greater_heal",
+        "name": "상급 치유",
+        "type": "heal",
+        "description": "체력을 크게 회복한다.",
+        "healAmount": 120,
+        "mpCost": 30,
+        "cooldown": 4,
+        "requiredLevel": 6,
+        "level": 1
+    },
+    {
+        "id": "fireball",
+        "name": "파이어볼",
+        "type": "attack",
+        "description": "불덩이를 발사한다.",
+        "baseDamage": 200,
+        "mpCost": 25,
+        "cooldown": 3,
+        "requiredLevel": 4,
+        "level": 1,
+        "element": "fire"
+    },
+    {
+        "id": "ice_shield",
+        "name": "얼음 방패",
+        "type": "buff",
+        "description": "얼음 장벽으로 방어력을 높인다.",
+        "buffStats": {
+            "defense": 20
+        },
+        "mpCost": 20,
+        "cooldown": 5,
+        "requiredLevel": 3,
+        "level": 1,
+        "duration": 3
+    },
+    {
+        "id": "war_cry",
+        "name": "전투 함성",
+        "type": "buff",
+        "description": "함성으로 공격력을 높인다.",
+        "buffStats": {
+            "attack": 15,
+            "critRate": 0.1
+        },
+        "mpCost": 15,
+        "cooldown": 4,
+        "requiredLevel": 4,
+        "level": 1,
+        "duration": 3
+    },
+    {
+        "id": "dark_bolt",
+        "name": "암흑 화살",
+        "type": "attack",
+        "description": "어둠의 힘을 담은 화살.",
+        "baseDamage": 180,
+        "mpCost": 20,
+        "cooldown": 2,
+        "requiredLevel": 5,
+        "level": 1,
+        "element": "dark"
+    },
+    {
+        "id": "drain_life",
+        "name": "생명력 흡수",
+        "type": "attack",
+        "description": "적의 생명력을 흡수한다.",
+        "baseDamage": 100,
+        "healAmount": 50,
+        "mpCost": 25,
+        "cooldown": 4,
+        "requiredLevel": 8,
+        "level": 1,
+        "element": "dark"
+    },
+    {
+        "id": "bite",
+        "name": "물기",
+        "type": "attack",
+        "description": "날카로운 이빨로 물어뜯는다.",
+        "baseDamage": 120,
+        "mpCost": 0,
+        "cooldown": 1,
+        "requiredLevel": 1,
+        "level": 1
+    },
+    {
+        "id": "fire_breath",
+        "name": "화염 브레스",
+        "type": "attack",
+        "description": "용의 화염 숨결.",
+        "baseDamage": 300,
+        "mpCost": 40,
+        "cooldown": 3,
+        "requiredLevel": 15,
+        "level": 1,
+        "element": "fire",
+        "isAoe": true
+    },
+    {
+        "id": "tail_sweep",
+        "name": "꼬리 휩쓸기",
+        "type": "attack",
+        "description": "거대한 꼬리로 휩쓴다.",
+        "baseDamage": 200,
+        "mpCost": 20,
+        "cooldown": 2,
+        "requiredLevel": 15,
+        "level": 1,
+        "isAoe": true
+    },
+    {
+        "id": "dragon_roar",
+        "name": "용의 포효",
+        "type": "debuff",
+        "description": "적의 사기를 꺾는다.",
+        "debuffStats": {
+            "attack": -10,
+            "defense": -10
+        },
+        "mpCost": 30,
+        "cooldown": 5,
+        "requiredLevel": 15,
+        "level": 1,
+        "duration": 3,
+        "isAoe": true
+    }
+]

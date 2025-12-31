@@ -9,9 +9,11 @@
         "connectedTo": [
             "village1",
             "castle",
-            "port"
+            "port",
+            "forest"
         ],
-        "owner": "king"
+        "owner": "king",
+        "description": "왕국의 수도. 웅장한 성벽과 번화한 시장이 있다."
     },
     {
         "id": "castle",
@@ -23,7 +25,8 @@
         "connectedTo": [
             "capital"
         ],
-        "owner": "king"
+        "owner": "king",
+        "description": "왕이 거주하는 웅장한 성."
     },
     {
         "id": "village1",
@@ -34,8 +37,11 @@
         "stability": 0.6,
         "connectedTo": [
             "capital",
-            "wilderness"
-        ]
+            "wilderness",
+            "farm"
+        ],
+        "description": "왕도에서 떨어진 작은 마을. 평화롭지만 때로는 위험하다.",
+        "dangerLevel": 0
     },
     {
         "id": "port",
@@ -45,8 +51,10 @@
         "population": 20000,
         "stability": 0.7,
         "connectedTo": [
-            "capital"
-        ]
+            "capital",
+            "island"
+        ],
+        "description": "바다로 열린 무역의 중심지. 다양한 상인들이 모인다."
     },
     {
         "id": "wilderness",
@@ -57,8 +65,11 @@
         "stability": 0.3,
         "connectedTo": [
             "village1",
-            "dungeon"
-        ]
+            "dungeon",
+            "forest"
+        ],
+        "description": "위험한 짐승들이 출몰하는 야생 지역.",
+        "dangerLevel": 0.6
     },
     {
         "id": "dungeon",
@@ -68,7 +79,86 @@
         "population": 0,
         "stability": 0.1,
         "connectedTo": [
-            "wilderness"
-        ]
+            "wilderness",
+            "depths"
+        ],
+        "description": "고대 문명의 유적. 보물과 위험이 공존한다.",
+        "dangerLevel": 0.8
+    },
+    {
+        "id": "forest",
+        "name": "암흑의 숲",
+        "type": "forest",
+        "resources": 150,
+        "population": 50,
+        "stability": 0.4,
+        "connectedTo": [
+            "capital",
+            "wilderness",
+            "shrine"
+        ],
+        "description": "울창한 숲. 약초와 마수가 공존한다.",
+        "dangerLevel": 0.5
+    },
+    {
+        "id": "farm",
+        "name": "너른 농장",
+        "type": "farm",
+        "resources": 400,
+        "population": 200,
+        "stability": 0.75,
+        "connectedTo": [
+            "village1"
+        ],
+        "description": "왕국의 곡창 지대. 풍요로운 수확이 이루어진다."
+    },
+    {
+        "id": "shrine",
+        "name": "고대 신전",
+        "type": "temple",
+        "resources": 100,
+        "population": 20,
+        "stability": 0.85,
+        "connectedTo": [
+            "forest"
+        ],
+        "description": "잊혀진 신을 모시는 성스러운 장소."
+    },
+    {
+        "id": "depths",
+        "name": "던전 심층부",
+        "type": "dungeon",
+        "resources": 1000,
+        "population": 0,
+        "stability": 0.05,
+        "connectedTo": [
+            "dungeon"
+        ],
+        "description": "일반인은 접근할 수 없는 던전의 가장 깊은 곳.",
+        "dangerLevel": 0.95
+    },
+    {
+        "id": "island",
+        "name": "무인도",
+        "type": "island",
+        "resources": 200,
+        "population": 0,
+        "stability": 0.5,
+        "connectedTo": [
+            "port"
+        ],
+        "description": "바다 건너 외딴 섬. 숨겨진 비밀이 있다고 전해진다."
+    },
+    {
+        "id": "tavern",
+        "name": "검은 말 여관",
+        "type": "building",
+        "resources": 50,
+        "population": 30,
+        "stability": 0.7,
+        "connectedTo": [
+            "port"
+        ],
+        "description": "항구의 유명한 여관. 소문과 정보가 오간다."
     }
 ]

@@ -1,0 +1,146 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2025-12-31T06:36:31.046Z",
+  "turnCount": 0,
+  "player": {
+    "id": "char_1767162952796_jzdjl6ekh",
+    "name": "모험가",
+    "personality": {
+      "ambition": 0.5,
+      "loyalty": 0.5,
+      "morality": 0.5,
+      "courage": 0.5,
+      "cunning": 0.5
+    },
+    "emotion": {
+      "trust": 0.5,
+      "fear": 0,
+      "anger": 0,
+      "joy": 0.3,
+      "despair": 0
+    },
+    "location": "village1",
+    "resources": 100,
+    "power": 10,
+    "memory": [],
+    "beliefs": {},
+    "isPlayer": true
+  },
+  "characters": [
+    {
+      "id": "char_1767162952796_hqell0mo7",
+      "name": "왕",
+      "title": "아르테미스 왕",
+      "personality": {
+        "ambition": 0.7,
+        "loyalty": 0.6,
+        "morality": 0.6,
+        "courage": 0.7,
+        "cunning": 0.5
+      },
+      "emotion": {
+        "trust": 0.5,
+        "fear": 0,
+        "anger": 0,
+        "joy": 0.3,
+        "despair": 0
+      },
+      "location": "capital",
+      "resources": 10000,
+      "power": 100,
+      "memory": [],
+      "beliefs": {},
+      "isPlayer": false
+    },
+    {
+      "id": "char_1767162952796_prfrwr6qz",
+      "name": "마르코",
+      "title": "대상인",
+      "personality": {
+        "ambition": 0.8,
+        "loyalty": 0.4,
+        "morality": 0.5,
+        "courage": 0.3,
+        "cunning": 0.8
+      },
+      "emotion": {
+        "trust": 0.5,
+        "fear": 0,
+        "anger": 0,
+        "joy": 0.3,
+        "despair": 0
+      },
+      "location": "capital",
+      "resources": 5000,
+      "power": 30,
+      "memory": [],
+      "beliefs": {},
+      "isPlayer": false
+    },
+    {
+      "id": "char_1767162952796_jzdjl6ekh",
+      "name": "모험가",
+      "personality": {
+        "ambition": 0.5,
+        "loyalty": 0.5,
+        "morality": 0.5,
+        "courage": 0.5,
+        "cunning": 0.5
+      },
+      "emotion": {
+        "trust": 0.5,
+        "fear": 0,
+        "anger": 0,
+        "joy": 0.3,
+        "despair": 0
+      },
+      "location": "village1",
+      "resources": 100,
+      "power": 10,
+      "memory": [],
+      "beliefs": {},
+      "isPlayer": true
+    }
+  ],
+  "worldState": {
+    "time": 0,
+    "globalState": {
+      "warActive": false,
+      "economyIndex": 1,
+      "plagueActive": false,
+      "season": "spring",
+      "dayOfYear": 1
+    }
+  },
+  "relations": [
+    {
+      "from": "char_1767162952796_hqell0mo7",
+      "to": "char_1767162952796_prfrwr6qz",
+      "trust": 0.4,
+      "fear": 0,
+      "debt": 0
+    },
+    {
+      "from": "char_1767162952796_prfrwr6qz",
+      "to": "char_1767162952796_hqell0mo7",
+      "trust": 0.2,
+      "fear": 0.3,
+      "debt": 0
+    },
+    {
+      "from": "char_1767162952796_prfrwr6qz",
+      "to": "char_1767162952796_jzdjl6ekh",
+      "trust": 0.2,
+      "fear": 0,
+      "debt": 0
+    },
+    {
+      "from": "char_1767162952796_jzdjl6ekh",
+      "to": "char_1767162952796_prfrwr6qz",
+      "trust": 0.3,
+      "fear": 0,
+      "debt": 0
+    }
+  ],
+  "playerLocation": "village1"
+}

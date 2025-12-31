@@ -26,6 +26,10 @@ import {
     Weather,
     Disease,
 } from './simulation';
+import { SaveSystem } from './game/SaveSystem';
+import { LevelSystem } from './game/LevelSystem';
+import { Combat, CombatAction } from './game/Combat';
+import { CombatStats } from './core/types';
 
 // ============ 게임 상태 ============
 let { world, player, king, merchant } = createGame();
@@ -42,6 +46,9 @@ let disease: Disease;
 let currentTarget: Character | null = null;
 let turnCount = 0;
 let gameRunning = true;
+let saveSystem: SaveSystem;
+let inCombat = false;
+let currentCombat: Combat | null = null;
 
 // ============ 초기화 ============
 function initGame() {
@@ -78,8 +85,16 @@ function initGame() {
     world.relations.updateRelation(merchant.id, player.id, { trust: 0.2 });
     world.relations.updateRelation(king.id, merchant.id, { trust: 0.4 });
 
+    // 세이브 시스템 초기화
+    saveSystem = new SaveSystem();
+
+    // 플레이어 전투/성장 시스템 초기화
+    LevelSystem.initializePlayerStats(player);
+
     turnCount = 0;
     currentTarget = null;
+    inCombat = false;
+    currentCombat = null;
 }
 
 // ============ 출력 유틸리티 ============
@@ -187,8 +202,22 @@ function renderMainMenu(): string[] {
     options.push('observe');
     console.log(`  ${options.length}. 주변 관찰하기`);
 
+    // 위험한 장소에서 탐색(전투) 가능
+    const currentLocation = world.getLocation(player.location);
+    const dangerLevel = (currentLocation as any)?.dangerLevel || 0;
+    if (dangerLevel > 0 || currentLocation?.type === 'wilderness' || currentLocation?.type === 'dungeon') {
+        options.push('explore');
+        console.log(`  ${options.length}. 탐색하기 ⚔️`);
+    }
+
     options.push('status');
     console.log(`  ${options.length}. 상세 상태 보기`);
+
+    options.push('save');
+    console.log(`  ${options.length}. 저장하기`);
+
+    options.push('load');
+    console.log(`  ${options.length}. 불러오기`);
 
     options.push('wait');
     console.log(`  ${options.length}. 시간 보내기`);
@@ -285,8 +314,23 @@ function handleMainAction(action: string) {
             }
             break;
 
+        case 'explore':
+            // 탐색은 비동기 처리 필요
+            (global as any).pendingAction = 'explore';
+            break;
+
         case 'status':
             renderDetailedStatus();
+            break;
+
+        case 'save':
+            // 저장은 비동기 처리가 필요하므로 플래그 설정
+            (global as any).pendingAction = 'save';
+            break;
+
+        case 'load':
+            // 불러오기도 비동기 처리
+            (global as any).pendingAction = 'load';
             break;
 
         case 'wait':
@@ -366,6 +410,181 @@ function renderDetailedStatus() {
 
     console.log('\n[질병]');
     console.log(`  ${disease.describe()}`);
+
+    // 전투 능력치 표시
+    if (player.stats) {
+        console.log('\n[전투 능력치]');
+        console.log(`  레벨: ${player.level || 1}`);
+        console.log(`  경험치: ${player.experience || 0}/${player.expToNextLevel || 100}`);
+        console.log(`  HP: ${player.stats.currentHp}/${player.stats.maxHp}`);
+        console.log(`  MP: ${player.stats.currentMp}/${player.stats.maxMp}`);
+        console.log(`  공격력: ${player.stats.attack} | 방어력: ${player.stats.defense}`);
+        console.log(`  속도: ${player.stats.speed} | 치명타: ${(player.stats.critRate * 100).toFixed(0)}%`);
+
+        if (player.statPoints && player.statPoints > 0) {
+            console.log(`  💡 분배 가능한 스탯 포인트: ${player.statPoints}`);
+        }
+        if (player.skillPoints && player.skillPoints > 0) {
+            console.log(`  💡 분배 가능한 스킬 포인트: ${player.skillPoints}`);
+        }
+    }
+}
+
+// ============ 전투 시스템 ============
+
+// 적 데이터 (간단한 버전)
+const ENEMIES = [
+    { id: 'goblin', name: '고블린', level: 1, hp: 30, attack: 8, defense: 2, speed: 12, exp: 15 },
+    { id: 'wolf', name: '늑대', level: 2, hp: 45, attack: 12, defense: 3, speed: 18, exp: 25 },
+    { id: 'bandit', name: '산적', level: 3, hp: 60, attack: 15, defense: 5, speed: 10, exp: 40 },
+    { id: 'skeleton', name: '스켈레톤', level: 5, hp: 80, attack: 20, defense: 8, speed: 8, exp: 60 },
+];
+
+function getRandomEnemy(locationDanger: number): typeof ENEMIES[0] {
+    const maxLevel = Math.floor(locationDanger * 10) + 1;
+    const available = ENEMIES.filter(e => e.level <= maxLevel);
+    return available[Math.floor(Math.random() * available.length)] || ENEMIES[0];
+}
+
+function renderCombatScreen(enemy: { name: string; hp: number; maxHp: number }) {
+    console.clear();
+    printHeader(`⚔️ 전투 - ${enemy.name}`);
+
+    // 적 상태
+    const enemyHpBar = '█'.repeat(Math.floor((enemy.hp / enemy.maxHp) * 20)) +
+        '░'.repeat(20 - Math.floor((enemy.hp / enemy.maxHp) * 20));
+    console.log(`\n  ${enemy.name}`);
+    console.log(`  HP: [${enemyHpBar}] ${enemy.hp}/${enemy.maxHp}`);
+
+    // 플레이어 상태
+    if (player.stats) {
+        const playerHpBar = '█'.repeat(Math.floor((player.stats.currentHp / player.stats.maxHp) * 20)) +
+            '░'.repeat(20 - Math.floor((player.stats.currentHp / player.stats.maxHp) * 20));
+        const playerMpBar = '█'.repeat(Math.floor((player.stats.currentMp / player.stats.maxMp) * 10)) +
+            '░'.repeat(10 - Math.floor((player.stats.currentMp / player.stats.maxMp) * 10));
+        console.log(`\n  ${player.name} (Lv.${player.level || 1})`);
+        console.log(`  HP: [${playerHpBar}] ${player.stats.currentHp}/${player.stats.maxHp}`);
+        console.log(`  MP: [${playerMpBar}] ${player.stats.currentMp}/${player.stats.maxMp}`);
+    }
+
+    printSection('행동 선택');
+    console.log('  1. 공격');
+    console.log('  2. 방어');
+    console.log('  3. 도망');
+}
+
+async function runCombat(prompt: (q: string) => Promise<string>): Promise<{ victory: boolean; exp: number }> {
+    const location = world.getLocation(player.location);
+    const dangerLevel = (location as any)?.dangerLevel || 0.3;
+    const enemyData = getRandomEnemy(dangerLevel);
+
+    const enemy = {
+        ...enemyData,
+        maxHp: enemyData.hp,
+    };
+
+    console.log(`\n⚔️ ${enemy.name}이(가) 나타났다!`);
+    await prompt('\nEnter를 눌러 전투 시작...');
+
+    while (enemy.hp > 0 && player.stats && player.stats.currentHp > 0) {
+        renderCombatScreen(enemy);
+
+        const input = await prompt('\n선택: ');
+        const choice = parseInt(input);
+
+        if (choice === 1) {
+            // 공격
+            const damage = Math.max(1, (player.stats?.attack || 10) - enemy.defense);
+            const isCrit = Math.random() < (player.stats?.critRate || 0.05);
+            const finalDamage = isCrit ? Math.floor(damage * (player.stats?.critDamage || 1.5)) : damage;
+
+            enemy.hp = Math.max(0, enemy.hp - finalDamage);
+            console.log(`\n⚔️ ${player.name}의 공격! ${finalDamage} 데미지${isCrit ? ' (치명타!)' : ''}`);
+
+        } else if (choice === 2) {
+            // 방어
+            console.log(`\n🛡️ ${player.name}이(가) 방어 태세를 취했다.`);
+
+        } else if (choice === 3) {
+            // 도망
+            if (Math.random() < 0.5) {
+                console.log('\n🏃 도망에 성공했다!');
+                await prompt('\nEnter를 눌러 계속...');
+                return { victory: false, exp: 0 };
+            } else {
+                console.log('\n❌ 도망에 실패했다!');
+            }
+        }
+
+        // 적 턴
+        if (enemy.hp > 0 && player.stats) {
+            const isDefending = choice === 2;
+            const enemyDamage = Math.max(1, enemy.attack - (player.stats.defense * (isDefending ? 2 : 1)));
+            player.stats.currentHp = Math.max(0, player.stats.currentHp - enemyDamage);
+            console.log(`\n💥 ${enemy.name}의 공격! ${enemyDamage} 데미지${isDefending ? ' (방어 중)' : ''}`);
+        }
+
+        await prompt('\nEnter를 눌러 계속...');
+    }
+
+    if (player.stats && player.stats.currentHp <= 0) {
+        console.log('\n💀 패배했다...');
+        player.stats.currentHp = Math.floor(player.stats.maxHp * 0.3); // 30% HP로 부활
+        return { victory: false, exp: 0 };
+    } else {
+        console.log(`\n🎉 ${enemy.name}을(를) 물리쳤다!`);
+        console.log(`💰 ${enemy.exp} 경험치 획득!`);
+        return { victory: true, exp: enemy.exp };
+    }
+}
+
+async function handleCombatResult(prompt: (q: string) => Promise<string>, result: { victory: boolean; exp: number }) {
+    if (result.victory && result.exp > 0) {
+        const levelUp = LevelSystem.addExperience(player, result.exp);
+
+        if (levelUp) {
+            await prompt('\nEnter를 눌러 계속...');
+            await renderLevelUpScreen(prompt, levelUp);
+        }
+    }
+}
+
+async function renderLevelUpScreen(prompt: (q: string) => Promise<string>, reward: { level: number; statPoints: number }) {
+    console.clear();
+    printHeader('🎊 레벨 업!');
+
+    console.log(`\n  레벨 ${reward.level - 1} → ${reward.level}`);
+    console.log(`  💪 스탯 포인트 +${reward.statPoints}`);
+    console.log(`  ❤️ HP/MP 전체 회복!`);
+
+    while (player.statPoints && player.statPoints > 0) {
+        console.log(`\n  남은 스탯 포인트: ${player.statPoints}`);
+        console.log('\n  스탯 분배:');
+        console.log('  1. 공격력 (+2)');
+        console.log('  2. 방어력 (+2)');
+        console.log('  3. 최대 HP (+10)');
+        console.log('  4. 최대 MP (+5)');
+        console.log('  5. 속도 (+1)');
+        console.log('  0. 나중에 분배');
+
+        const input = await prompt('\n선택: ');
+        const choice = parseInt(input);
+
+        if (choice === 0) break;
+
+        const statMap: Record<number, 'attack' | 'defense' | 'maxHp' | 'maxMp' | 'speed'> = {
+            1: 'attack',
+            2: 'defense',
+            3: 'maxHp',
+            4: 'maxMp',
+            5: 'speed',
+        };
+
+        if (statMap[choice]) {
+            LevelSystem.distributeStat(player, statMap[choice]);
+            console.log(`✅ ${statMap[choice]} 증가!`);
+        }
+    }
 }
 
 // ============ 메인 게임 루프 ============
@@ -416,7 +635,64 @@ async function gameLoop() {
             if (optionIndex >= 0 && optionIndex < options.length) {
                 handleMainAction(options[optionIndex]);
 
-                if (options[optionIndex] !== 'quit' &&
+                // 저장/불러오기 처리
+                const pendingAction = (global as any).pendingAction;
+                if (pendingAction === 'save') {
+                    (global as any).pendingAction = null;
+                    console.log('\n💾 게임 저장');
+                    const slotName = await prompt('저장 슬롯 이름 (기본: slot1): ');
+                    const finalSlot = slotName.trim() || 'slot1';
+
+                    if (saveSystem.saveGame(finalSlot, turnCount, player, world)) {
+                        console.log(`✅ "${finalSlot}" 슬롯에 저장 완료!`);
+                    } else {
+                        console.log('❌ 저장 실패');
+                    }
+                    await prompt('\nEnter를 눌러 계속...');
+                } else if (pendingAction === 'load') {
+                    (global as any).pendingAction = null;
+                    console.log('\n📂 저장 목록');
+                    const saves = saveSystem.listSaves();
+
+                    if (saves.length === 0) {
+                        console.log('  저장된 게임이 없습니다.');
+                    } else {
+                        saves.forEach((s, i) => {
+                            console.log(`  ${i + 1}. [${s.slotName}] ${s.playerName} - 턴 ${s.turnCount} (${saveSystem.formatTimestamp(s.timestamp)})`);
+                        });
+                        console.log('  0. 취소');
+
+                        const loadInput = await prompt('\n불러올 슬롯 번호: ');
+                        const loadIndex = parseInt(loadInput) - 1;
+
+                        if (loadIndex >= 0 && loadIndex < saves.length) {
+                            const saveData = saveSystem.loadGame(saves[loadIndex].slotName);
+                            if (saveData) {
+                                saveSystem.restoreToWorld(saveData, world);
+                                Object.assign(player, saveData.player);
+                                turnCount = saveData.turnCount;
+                                console.log(`✅ "${saves[loadIndex].slotName}" 불러오기 완료!`);
+                            } else {
+                                console.log('❌ 불러오기 실패');
+                            }
+                        }
+                    }
+                    await prompt('\nEnter를 눌러 계속...');
+                } else if (pendingAction === 'explore') {
+                    (global as any).pendingAction = null;
+                    console.log('\n🔍 주변을 탐색한다...');
+
+                    // 전투 발생 확률
+                    if (Math.random() < 0.7) {
+                        const result = await runCombat(prompt);
+                        await handleCombatResult(prompt, result);
+                    } else {
+                        console.log('\n  주변에 아무것도 없다...');
+                    }
+
+                    processTurn();
+                    await prompt('\nEnter를 눌러 계속...');
+                } else if (options[optionIndex] !== 'quit' &&
                     !options[optionIndex].startsWith('talk:')) {
                     await prompt('\nEnter를 눌러 계속...');
                 }

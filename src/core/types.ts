@@ -34,6 +34,59 @@ export interface InterpretedEvent {
     timestamp: number;
 }
 
+// ============ 전투/성장 관련 ============
+
+/** 전투 능력치 */
+export interface CombatStats {
+    maxHp: number;
+    currentHp: number;
+    maxMp: number;
+    currentMp: number;
+    attack: number;
+    defense: number;
+    speed: number;
+    critRate: number;      // 치명타 확률 0~1
+    critDamage: number;    // 치명타 배율 (예: 1.5 = 150%)
+}
+
+/** 아이템 */
+export interface Item {
+    id: EntityId;
+    name: string;
+    type: 'weapon' | 'armor' | 'accessory' | 'consumable';
+    description: string;
+    stats?: Partial<CombatStats>;
+    effect?: {
+        type: 'heal' | 'buff' | 'damage';
+        value: number;
+        duration?: number;
+    };
+    price: number;
+}
+
+/** 장비 */
+export interface Equipment {
+    weapon?: Item;
+    armor?: Item;
+    accessory?: Item;
+}
+
+/** 스킬 */
+export interface Skill {
+    id: EntityId;
+    name: string;
+    type: 'attack' | 'heal' | 'buff' | 'debuff';
+    description: string;
+    baseDamage?: number;
+    healAmount?: number;
+    buffStats?: Partial<CombatStats>;
+    mpCost: number;
+    cooldown: number;
+    currentCooldown?: number;
+    requiredLevel: number;
+    level: number;
+}
+
 /** 인물 */
 export interface Character {
     id: EntityId;
@@ -51,6 +104,17 @@ export interface Character {
     beliefs: Map<string, number>;  // 믿음 (확률)
 
     isPlayer: boolean;
+
+    // 전투/성장 관련 (선택적)
+    stats?: CombatStats;
+    equipment?: Equipment;
+    skills?: Skill[];
+    level?: number;
+    experience?: number;
+    expToNextLevel?: number;
+    statPoints?: number;
+    skillPoints?: number;
+    inventory?: Item[];
 }
 
 // ============ 관계 ============
@@ -69,7 +133,7 @@ export interface Relation {
 export interface Location {
     id: EntityId;
     name: string;
-    type: 'city' | 'village' | 'wilderness' | 'dungeon' | 'castle';
+    type: 'city' | 'village' | 'wilderness' | 'dungeon' | 'castle' | 'forest' | 'farm' | 'temple' | 'island' | 'building';
 
     resources: number;
     population: number;
@@ -77,6 +141,8 @@ export interface Location {
 
     connectedTo: EntityId[];  // 연결된 장소
     owner?: EntityId;         // 소유자 (인물/세력)
+    dangerLevel?: number;     // 위험도 0~1 (전투 발생 확률)
+    description?: string;     // 장소 설명
 }
 
 // ============ 사건 ============

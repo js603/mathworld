@@ -1,0 +1,268 @@
+{
+    "weapons": [
+        {
+            "id": "wooden_sword",
+            "name": "나무 검",
+            "type": "weapon",
+            "description": "초보자용 나무 검. 그래도 없는 것보단 낫다.",
+            "stats": {
+                "attack": 5
+            },
+            "price": 50
+        },
+        {
+            "id": "iron_sword",
+            "name": "철 검",
+            "type": "weapon",
+            "description": "튼튼한 철로 만든 검.",
+            "stats": {
+                "attack": 15
+            },
+            "price": 200
+        },
+        {
+            "id": "steel_sword",
+            "name": "강철 검",
+            "type": "weapon",
+            "description": "단단한 강철로 제작된 검.",
+            "stats": {
+                "attack": 25,
+                "critRate": 0.05
+            },
+            "price": 500
+        },
+        {
+            "id": "magic_sword",
+            "name": "마법검",
+            "type": "weapon",
+            "description": "마력이 깃든 신비로운 검.",
+            "stats": {
+                "attack": 40,
+                "critRate": 0.1,
+                "critDamage": 0.2
+            },
+            "price": 1500
+        },
+        {
+            "id": "legendary_sword",
+            "name": "전설의 검",
+            "type": "weapon",
+            "description": "고대 영웅이 사용했다는 전설의 검.",
+            "stats": {
+                "attack": 80,
+                "critRate": 0.2,
+                "critDamage": 0.5,
+                "speed": 5
+            },
+            "price": 10000
+        },
+        {
+            "id": "orc_axe",
+            "name": "오크 전투도끼",
+            "type": "weapon",
+            "description": "오크가 사용하던 무거운 도끼.",
+            "stats": {
+                "attack": 35,
+                "speed": -5,
+                "critDamage": 0.3
+            },
+            "price": 800
+        },
+        {
+            "id": "magic_staff",
+            "name": "마법 지팡이",
+            "type": "weapon",
+            "description": "마법사용 지팡이. MP가 증가한다.",
+            "stats": {
+                "attack": 10,
+                "maxMp": 30
+            },
+            "price": 600
+        }
+    ],
+    "armors": [
+        {
+            "id": "leather_armor",
+            "name": "가죽 갑옷",
+            "type": "armor",
+            "description": "가볍고 튼튼한 가죽 갑옷.",
+            "stats": {
+                "defense": 5,
+                "maxHp": 10
+            },
+            "price": 100
+        },
+        {
+            "id": "iron_armor",
+            "name": "철 갑옷",
+            "type": "armor",
+            "description": "튼튼한 철 갑옷.",
+            "stats": {
+                "defense": 15,
+                "maxHp": 30,
+                "speed": -2
+            },
+            "price": 400
+        },
+        {
+            "id": "steel_armor",
+            "name": "강철 갑옷",
+            "type": "armor",
+            "description": "두꺼운 강철 갑옷.",
+            "stats": {
+                "defense": 25,
+                "maxHp": 50,
+                "speed": -3
+            },
+            "price": 1000
+        },
+        {
+            "id": "mage_robe",
+            "name": "마법사 로브",
+            "type": "armor",
+            "description": "마력이 깃든 로브.",
+            "stats": {
+                "defense": 5,
+                "maxMp": 50
+            },
+            "price": 500
+        }
+    ],
+    "accessories": [
+        {
+            "id": "ring_of_power",
+            "name": "힘의 반지",
+            "type": "accessory",
+            "description": "착용자의 힘을 증가시키는 반지.",
+            "stats": {
+                "attack": 10
+            },
+            "price": 300
+        },
+        {
+            "id": "amulet_of_protection",
+            "name": "수호의 목걸이",
+            "type": "accessory",
+            "description": "착용자를 보호하는 목걸이.",
+            "stats": {
+                "defense": 10,
+                "maxHp": 20
+            },
+            "price": 400
+        },
+        {
+            "id": "boots_of_speed",
+            "name": "신속의 장화",
+            "type": "accessory",
+            "description": "착용자의 속도를 높여주는 장화.",
+            "stats": {
+                "speed": 15
+            },
+            "price": 350
+        }
+    ],
+    "consumables": [
+        {
+            "id": "hp_potion_small",
+            "name": "소형 체력 포션",
+            "type": "consumable",
+            "description": "체력을 조금 회복한다.",
+            "effect": {
+                "type": "heal",
+                "value": 30
+            },
+            "price": 25
+        },
+        {
+            "id": "hp_potion",
+            "name": "체력 포션",
+            "type": "consumable",
+            "description": "체력을 회복한다.",
+            "effect": {
+                "type": "heal",
+                "value": 75
+            },
+            "price": 50
+        },
+        {
+            "id": "hp_potion_large",
+            "name": "대형 체력 포션",
+            "type": "consumable",
+            "description": "체력을 크게 회복한다.",
+            "effect": {
+                "type": "heal",
+                "value": 150
+            },
+            "price": 120
+        },
+        {
+            "id": "mp_potion",
+            "name": "마나 포션",
+            "type": "consumable",
+            "description": "마나를 회복한다.",
+            "effect": {
+                "type": "heal",
+                "value": 50,
+                "stat": "mp"
+            },
+            "price": 60
+        },
+        {
+            "id": "strength_elixir",
+            "name": "힘의 영약",
+            "type": "consumable",
+            "description": "일시적으로 공격력이 증가한다.",
+            "effect": {
+                "type": "buff",
+                "value": 20,
+                "stat": "attack",
+                "duration": 3
+            },
+            "price": 100
+        }
+    ],
+    "materials": [
+        {
+            "id": "wolf_pelt",
+            "name": "늑대 가죽",
+            "type": "consumable",
+            "description": "늑대에게서 얻은 가죽. 판매하거나 제작에 사용할 수 있다.",
+            "price": 30
+        },
+        {
+            "id": "bone",
+            "name": "뼈",
+            "type": "consumable",
+            "description": "언데드에게서 얻은 뼈.",
+            "price": 15
+        },
+        {
+            "id": "dragon_scale",
+            "name": "용의 비늘",
+            "type": "consumable",
+            "description": "고대 용의 비늘. 매우 귀중하다.",
+            "price": 5000
+        },
+        {
+            "id": "dragon_heart",
+            "name": "용의 심장",
+            "type": "consumable",
+            "description": "고대 용의 심장. 전설적인 아이템.",
+            "price": 20000
+        },
+        {
+            "id": "ancient_coin",
+            "name": "고대 동전",
+            "type": "consumable",
+            "description": "오래된 동전. 수집가들에게 가치가 있다.",
+            "price": 100
+        },
+        {
+            "id": "gold_coin",
+            "name": "금화",
+            "type": "consumable",
+            "description": "왕국에서 사용되는 통화.",
+            "price": 1
+        }
+    ]
+}

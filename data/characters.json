@@ -58,5 +58,125 @@
         },
         "power": 20,
         "resources": 1000
+    },
+    {
+        "id": "blacksmith",
+        "name": "토린",
+        "title": "드워프 대장장이",
+        "location": "village1",
+        "personality": {
+            "ambition": 0.3,
+            "loyalty": 0.7,
+            "morality": 0.8,
+            "courage": 0.6,
+            "cunning": 0.2
+        },
+        "power": 15,
+        "resources": 800
+    },
+    {
+        "id": "healer",
+        "name": "엘라나",
+        "title": "치유사",
+        "location": "village1",
+        "personality": {
+            "ambition": 0.2,
+            "loyalty": 0.9,
+            "morality": 0.95,
+            "courage": 0.5,
+            "cunning": 0.3
+        },
+        "power": 10,
+        "resources": 300
+    },
+    {
+        "id": "thief",
+        "name": "케인",
+        "title": "그림자 도적",
+        "location": "port",
+        "personality": {
+            "ambition": 0.7,
+            "loyalty": 0.3,
+            "morality": 0.2,
+            "courage": 0.6,
+            "cunning": 0.9
+        },
+        "power": 25,
+        "resources": 2000
+    },
+    {
+        "id": "scholar",
+        "name": "메르린",
+        "title": "현자",
+        "location": "capital",
+        "personality": {
+            "ambition": 0.5,
+            "loyalty": 0.6,
+            "morality": 0.8,
+            "courage": 0.3,
+            "cunning": 0.7
+        },
+        "power": 20,
+        "resources": 600
+    },
+    {
+        "id": "innkeeper",
+        "name": "마고",
+        "title": "여관주인",
+        "location": "port",
+        "personality": {
+            "ambition": 0.4,
+            "loyalty": 0.7,
+            "morality": 0.6,
+            "courage": 0.4,
+            "cunning": 0.5
+        },
+        "power": 8,
+        "resources": 400
+    },
+    {
+        "id": "noble",
+        "name": "발렌틴 공작",
+        "title": "귀족",
+        "location": "capital",
+        "personality": {
+            "ambition": 0.85,
+            "loyalty": 0.5,
+            "morality": 0.4,
+            "courage": 0.5,
+            "cunning": 0.7
+        },
+        "power": 70,
+        "resources": 8000
+    },
+    {
+        "id": "assassin",
+        "name": "벨라",
+        "title": "???",
+        "location": "dungeon",
+        "personality": {
+            "ambition": 0.6,
+            "loyalty": 0.1,
+            "morality": 0.1,
+            "courage": 0.8,
+            "cunning": 0.95
+        },
+        "power": 40,
+        "resources": 3000
+    },
+    {
+        "id": "priest",
+        "name": "베네딕토",
+        "title": "대사제",
+        "location": "capital",
+        "personality": {
+            "ambition": 0.3,
+            "loyalty": 0.7,
+            "morality": 0.9,
+            "courage": 0.5,
+            "cunning": 0.4
+        },
+        "power": 35,
+        "resources": 1500
     }
 ]

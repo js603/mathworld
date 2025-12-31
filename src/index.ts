@@ -75,7 +75,7 @@ export function createGame() {
 }
 
 // CLI에서 직접 실행 시
-if (require.main === module) {
+if (typeof require !== 'undefined' && require.main === module) {
     console.log('MathWorld 엔진 초기화...');
     const { world, player } = createGame();
     console.log('세계 상태:', world.snapshot());

@@ -1,0 +1,270 @@
+[
+    {
+        "id": "goblin",
+        "name": "고블린",
+        "level": 1,
+        "stats": {
+            "maxHp": 30,
+            "currentHp": 30,
+            "maxMp": 0,
+            "currentMp": 0,
+            "attack": 8,
+            "defense": 2,
+            "speed": 12,
+            "critRate": 0.05,
+            "critDamage": 1.2
+        },
+        "skills": [],
+        "drops": [
+            {
+                "itemId": "hp_potion_small",
+                "chance": 0.3
+            },
+            {
+                "itemId": "gold_coin",
+                "chance": 0.8,
+                "amount": [
+                    5,
+                    15
+                ]
+            }
+        ],
+        "expReward": 15
+    },
+    {
+        "id": "wolf",
+        "name": "늑대",
+        "level": 2,
+        "stats": {
+            "maxHp": 45,
+            "currentHp": 45,
+            "maxMp": 0,
+            "currentMp": 0,
+            "attack": 12,
+            "defense": 3,
+            "speed": 18,
+            "critRate": 0.1,
+            "critDamage": 1.3
+        },
+        "skills": [
+            "bite"
+        ],
+        "drops": [
+            {
+                "itemId": "wolf_pelt",
+                "chance": 0.5
+            },
+            {
+                "itemId": "gold_coin",
+                "chance": 0.6,
+                "amount": [
+                    10,
+                    25
+                ]
+            }
+        ],
+        "expReward": 25
+    },
+    {
+        "id": "bandit",
+        "name": "산적",
+        "level": 3,
+        "stats": {
+            "maxHp": 60,
+            "currentHp": 60,
+            "maxMp": 10,
+            "currentMp": 10,
+            "attack": 15,
+            "defense": 5,
+            "speed": 10,
+            "critRate": 0.08,
+            "critDamage": 1.4
+        },
+        "skills": [
+            "power_strike"
+        ],
+        "drops": [
+            {
+                "itemId": "iron_sword",
+                "chance": 0.1
+            },
+            {
+                "itemId": "hp_potion",
+                "chance": 0.4
+            },
+            {
+                "itemId": "gold_coin",
+                "chance": 1.0,
+                "amount": [
+                    20,
+                    50
+                ]
+            }
+        ],
+        "expReward": 40
+    },
+    {
+        "id": "skeleton",
+        "name": "스켈레톤",
+        "level": 5,
+        "stats": {
+            "maxHp": 80,
+            "currentHp": 80,
+            "maxMp": 0,
+            "currentMp": 0,
+            "attack": 20,
+            "defense": 8,
+            "speed": 8,
+            "critRate": 0.05,
+            "critDamage": 1.5
+        },
+        "skills": [],
+        "drops": [
+            {
+                "itemId": "bone",
+                "chance": 0.7
+            },
+            {
+                "itemId": "ancient_coin",
+                "chance": 0.2
+            },
+            {
+                "itemId": "gold_coin",
+                "chance": 0.9,
+                "amount": [
+                    30,
+                    70
+                ]
+            }
+        ],
+        "expReward": 60
+    },
+    {
+        "id": "orc_warrior",
+        "name": "오크 전사",
+        "level": 7,
+        "stats": {
+            "maxHp": 150,
+            "currentHp": 150,
+            "maxMp": 20,
+            "currentMp": 20,
+            "attack": 30,
+            "defense": 12,
+            "speed": 7,
+            "critRate": 0.12,
+            "critDamage": 1.6
+        },
+        "skills": [
+            "power_strike",
+            "war_cry"
+        ],
+        "drops": [
+            {
+                "itemId": "orc_axe",
+                "chance": 0.15
+            },
+            {
+                "itemId": "hp_potion",
+                "chance": 0.5
+            },
+            {
+                "itemId": "gold_coin",
+                "chance": 1.0,
+                "amount": [
+                    50,
+                    100
+                ]
+            }
+        ],
+        "expReward": 100
+    },
+    {
+        "id": "dark_mage",
+        "name": "암흑 마법사",
+        "level": 10,
+        "stats": {
+            "maxHp": 100,
+            "currentHp": 100,
+            "maxMp": 80,
+            "currentMp": 80,
+            "attack": 15,
+            "defense": 5,
+            "speed": 12,
+            "critRate": 0.15,
+            "critDamage": 1.8
+        },
+        "skills": [
+            "fireball",
+            "dark_bolt",
+            "drain_life"
+        ],
+        "drops": [
+            {
+                "itemId": "magic_staff",
+                "chance": 0.1
+            },
+            {
+                "itemId": "mp_potion",
+                "chance": 0.6
+            },
+            {
+                "itemId": "spell_book",
+                "chance": 0.2
+            },
+            {
+                "itemId": "gold_coin",
+                "chance": 1.0,
+                "amount": [
+                    80,
+                    150
+                ]
+            }
+        ],
+        "expReward": 150
+    },
+    {
+        "id": "ancient_dragon",
+        "name": "고대 용",
+        "level": 20,
+        "isBoss": true,
+        "stats": {
+            "maxHp": 1000,
+            "currentHp": 1000,
+            "maxMp": 200,
+            "currentMp": 200,
+            "attack": 80,
+            "defense": 40,
+            "speed": 15,
+            "critRate": 0.2,
+            "critDamage": 2.0
+        },
+        "skills": [
+            "fire_breath",
+            "tail_sweep",
+            "dragon_roar"
+        ],
+        "drops": [
+            {
+                "itemId": "dragon_scale",
+                "chance": 1.0
+            },
+            {
+                "itemId": "dragon_heart",
+                "chance": 0.5
+            },
+            {
+                "itemId": "legendary_sword",
+                "chance": 0.1
+            },
+            {
+                "itemId": "gold_coin",
+                "chance": 1.0,
+                "amount": [
+                    500,
+                    1000
+                ]
+            }
+        ],
+        "expReward": 1000
+    }
+]
