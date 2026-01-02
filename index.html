@@ -3,81 +3,42 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathWorld - 텍스트 소설형 RPG</title>
-    <meta name="description" content="수학적 알고리즘으로 구동되는 살아있는 세계. LLM 없이 순수 수학으로 만든 텍스트 RPG.">
-  <script type="module" crossorigin src="/mathworld/assets/index-DEZbCaBO.js"></script>
-  <link rel="stylesheet" crossorigin href="/mathworld/assets/index-DUgLaFra.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>MathWorld - 텍스트 RPG</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+  <script type="module" crossorigin src="/mathworld/assets/index-CBoPtnWA.js"></script>
+  <link rel="stylesheet" crossorigin href="/mathworld/assets/index-D1W31LIT.css">
 </head>
 
 <body>
     <div id="app">
-        <div id="game-container">
-            <!-- 게임 헤더 -->
-            <header id="game-header">
-                <h1>MathWorld</h1>
-                <div id="connection-status"></div>
-            </header>
-
-            <!-- 메인 화면 -->
-            <main id="main-screen">
-                <div id="start-menu">
-                    <h2>🎮 게임 시작</h2>
-                    <div class="menu-buttons">
-                        <button id="btn-single">싱글플레이</button>
-                        <button id="btn-host">방 만들기</button>
-                        <button id="btn-join">방 참가</button>
-                        <div style="margin-top: 10px; border-top: 1px dashed #444; padding-top: 10px;">
-                            <button id="btn-demo" style="color: #4CAF50;">📜 자동 데모</button>
-                            <button id="btn-analysis" style="color: #2196F3;">📊 시스템 분석</button>
-                        </div>
-                    </div>
-                    <div id="room-input" class="hidden">
-                        <input type="text" id="room-code" placeholder="방 코드 입력...">
-                        <button id="btn-connect">접속</button>
-                    </div>
-                </div>
-            </main>
-
-            <!-- 게임 화면 -->
-            <div id="game-screen" class="hidden">
-                <!-- 상태 바 -->
-                <div id="status-bar">
-                    <span id="status-turn">턴 0</span>
-                    <span id="status-location">📍 변방 마을</span>
-                    <span id="status-weather">☀️ 맑음 20°C</span>
-                </div>
-
-                <!-- 게임 출력 -->
-                <div id="game-output"></div>
-
-                <!-- 선택지/입력 -->
-                <div id="game-choices"></div>
-
-                <!-- 플레이어 상태 -->
-                <div id="player-status">
-                    <div id="hp-bar">
-                        <span class="label">HP</span>
-                        <div class="bar">
-                            <div class="fill hp-fill"></div>
-                        </div>
-                        <span class="value">100/100</span>
-                    </div>
-                    <div id="mp-bar">
-                        <span class="label">MP</span>
-                        <div class="bar">
-                            <div class="fill mp-fill"></div>
-                        </div>
-                        <span class="value">50/50</span>
-                    </div>
-                </div>
-
-                <!-- 접속자 목록 (멀티플레이어) -->
-                <div id="players-list" class="hidden">
-                    <h3>👥 접속자</h3>
-                    <ul id="players"></ul>
-                </div>
+        <!-- 시작 화면 -->
+        <div id="start-screen" class="screen">
+            <div class="start-content">
+                <h1 class="game-title">🏰 MathWorld</h1>
+                <p class="game-subtitle">텍스트 소설형 RPG</p>
+                <p class="game-desc">수학적 알고리즘으로 구동되는<br>살아있는 세계에 오신 것을 환영합니다.</p>
+                <button id="start-button" class="start-btn">
+                    🎮 게임 시작
+                </button>
             </div>
+        </div>
+
+        <!-- 게임 화면 -->
+        <div id="game-screen" class="screen hidden">
+            <!-- 상태바 (고정) -->
+            <div id="game-status" class="status-bar">
+                <div class="status-location">📍 시작 중...</div>
+            </div>
+
+            <!-- 게임 로그 (스크롤) -->
+            <div id="game-output" class="game-log"></div>
+
+            <!-- 선택지 영역 (하단 고정) -->
+            <div id="game-choices" class="choices-container"></div>
         </div>
     </div>
 
