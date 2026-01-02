@@ -144,7 +144,7 @@ export class GameCore {
 
         // 현재 장소
         const location = this.world.getLocation(this.player.location);
-        this.io.print(`\n📍 현재 위치: ${location?.name || '알 수 없음'}`);
+        this.io.print(`\n현재 위치: ${location?.name || '알 수 없음'}`);
 
         // 주변 인물
         const nearbyChars = this.world.getCharactersAt(this.player.location)
@@ -154,11 +154,11 @@ export class GameCore {
             this.io.printSection('주변 인물');
             nearbyChars.forEach((c: Character, i: number) => {
                 const relation = this.world.relations.getRelation(this.player.id, c.id);
-                const trustIcon = relation.trust > 0.3 ? '😊' : relation.trust < -0.3 ? '😠' : '😐';
+                const trustText = relation.trust > 0.3 ? '[+]' : relation.trust < -0.3 ? '[-]' : '[=]';
                 // NPC 인식 표시 (BeliefSystem 활용)
                 const perception = this.beliefSystem.getPerception(c, this.player.id);
                 const perceptionShort = perception.length > 20 ? perception.substring(0, 20) + '...' : perception;
-                this.io.print(`  ${i + 1}. ${c.title || ''} ${c.name} ${trustIcon}`);
+                this.io.print(`  ${i + 1}. ${c.title || ''} ${c.name} ${trustText}`);
                 if (perception && perception !== '중립적') {
                     this.io.print(`      └ "${perceptionShort}"`);
                 }
@@ -221,13 +221,18 @@ export class GameCore {
         // 상점 (마을/도시에서만)
         const currentLocation = this.world.getLocation(this.player.location);
         if (currentLocation?.type === 'city' || currentLocation?.type === 'village') {
-            options.push({ text: '🏪 상점', action: 'shop' });
+            options.push({ text: '상점', action: 'shop' });
         }
 
         // 위험한 장소에서 탐색(전투) 가능
         const dangerLevel = (currentLocation as any)?.dangerLevel || 0;
         if (dangerLevel > 0 || currentLocation?.type === 'wilderness' || currentLocation?.type === 'dungeon') {
-            options.push({ text: '탐색하기 ⚔️', action: 'explore' });
+            options.push({ text: '탐색하기', action: 'explore' });
+        }
+
+        // 사냥/채집 (황야/자연환경에서)
+        if (currentLocation?.type === 'wilderness' || currentLocation?.type === 'village') {
+            options.push({ text: '사냥/채집', action: 'hunt' });
         }
 
         options.push({ text: '상세 상태 보기', action: 'status' });
@@ -269,7 +274,7 @@ export class GameCore {
         const events = this.eventGenerator.generateEvents();
         events.forEach((e: any) => {
             if (e.isPublic) {
-                this.io.print(`\n📢 ${this.textRenderer.describeEvent(e, 'novel')}`);
+                this.io.print(`\n${this.textRenderer.describeEvent(e, 'novel')}`);
             }
             // 소문 확산
             this.simulateRumorSpread(e);
@@ -278,7 +283,7 @@ export class GameCore {
         // 임계값 체크
         const thresholdEvents = this.feedbackLoop.checkThresholds();
         thresholdEvents.forEach((e: any) => {
-            this.io.print(`\n⚠️ [중대 사건] ${this.textRenderer.describeEvent(e, 'novel')}`);
+            this.io.print(`\n[!중대] ${this.textRenderer.describeEvent(e, 'novel')}`);
         });
     }
 
@@ -296,7 +301,7 @@ export class GameCore {
                 const target = nearbyChars[Math.floor(Math.random() * nearbyChars.length)];
                 const action = this.decideNPCAction(npc, target);
                 if (action) {
-                    this.io.print(`\n💭 ${npc.name}이(가) ${target.name}에게 ${action}을(를) 했다.`);
+                    this.io.print(`\n${npc.name}이(가) ${target.name}에게 ${action}을(를) 했다.`);
                     // 관계 변화 (간단화)
                     const change = action === '친밀한 대화' ? 0.05 : action === '협력 제안' ? 0.1 : -0.05;
                     this.world.relations.modifyRelation(npc.id, target.id, { trust: change });
@@ -335,7 +340,7 @@ export class GameCore {
                 .slice(0, 3)
                 .map((id: string) => this.world.getCharacter(id)?.name || id);
             const suffix = informed.size > 3 ? ` 외 ${informed.size - 3}명` : '';
-            this.io.print(`  🗣️ 소문이 퍼지고 있다: ${names.join(', ')}${suffix}이(가) 알게 됨`);
+            this.io.print(`  [소문] ${names.join(', ')}${suffix}이(가) 알게 됨`);
         }
     }
 
@@ -355,13 +360,13 @@ export class GameCore {
                 const loc = this.world.getLocation(id);
                 if (loc) {
                     this.player.location = id;
-                    this.io.print(`\n🚶 ${loc.name}(으)로 이동했다.`);
+                    this.io.print(`\n${loc.name}(으)로 이동했다.`);
                     this.processTurn();
                 }
                 return true;
 
             case 'observe':
-                this.io.print('\n👁️ 주변을 살펴본다...');
+                this.io.print('\n주변을 살펴본다...');
                 const weatherInfo = this.weather.getWeather(this.player.location);
                 this.io.print(`  기온: ${weatherInfo.temperature.toFixed(1)}°C`);
                 this.io.print(`  습도: ${(weatherInfo.humidity * 100).toFixed(0)}%`);
@@ -384,6 +389,10 @@ export class GameCore {
                 await this.handleShop();
                 return false;
 
+            case 'hunt':
+                await this.handleHunt();
+                return true;
+
             case 'status':
                 this.renderDetailedStatus();
                 return false;
@@ -397,7 +406,7 @@ export class GameCore {
                 return false;
 
             case 'wait':
-                this.io.print('\n⏳ 시간을 보낸다...');
+                this.io.print('\n시간을 보낸다...');
                 this.processTurn();
                 return true;
 
@@ -413,7 +422,7 @@ export class GameCore {
     handleInteraction(choice: Choice) {
         if (!this.currentTarget) return;
 
-        this.io.print(`\n💬 ${choice.text}`);
+        this.io.print(`\n${choice.text}`);
 
         try {
             const target = this.currentTarget;
@@ -436,7 +445,7 @@ export class GameCore {
             this.processTurn();
             this.currentTarget = null;
         } catch (error) {
-            this.io.print(`\n⚠️ 오류 발생: ${error}`);
+            this.io.print(`\n[오류] ${error}`);
             this.currentTarget = null;
         }
     }
@@ -480,26 +489,26 @@ export class GameCore {
 
         // 질병 알림
         if (this.world.globalState.plagueActive) {
-            alerts.push('🦠 역병이 퍼지고 있습니다! 약값이 치솟고 있습니다.');
+            alerts.push('[역병] 역병이 퍼지고 있습니다! 약값이 치솟고 있습니다.');
         }
 
         // 전쟁 알림
         if (this.world.globalState.warActive) {
-            alerts.push('⚔️ 전쟁 중! 무기 수요가 급증하고 있습니다.');
+            alerts.push('[전쟁] 전쟁 중! 무기 수요가 급증하고 있습니다.');
         }
 
         // 경제 상황
         const economySummary = this.economy.getSummary();
         if (economySummary.inflationRate > 0.1) {
-            alerts.push(`📈 인플레이션 ${(economySummary.inflationRate * 100).toFixed(0)}%! 물가가 오르고 있습니다.`);
+            alerts.push(`[경제] 인플레이션 ${(economySummary.inflationRate * 100).toFixed(0)}%! 물가가 오르고 있습니다.`);
         } else if (economySummary.inflationRate < -0.05) {
-            alerts.push('📉 경기 침체! 물가가 떨어지고 있습니다.');
+            alerts.push('[경제] 경기 침체! 물가가 떨어지고 있습니다.');
         }
 
         // 계절 알림
         const season = this.world.globalState.season;
         if (season === 'winter') {
-            alerts.push('❄️ 겨울입니다. 식량 수요가 높습니다.');
+            alerts.push('[겨울] 겨울입니다. 식량 수요가 높습니다.');
         }
 
         // 알림 출력
@@ -522,7 +531,7 @@ export class GameCore {
                     .map((id: string) => this.world.getCharacter(id)?.name || id)
                     .slice(0, 3);
                 const suffix = cluster.length > 3 ? ` 외 ${cluster.length - 3}명` : '';
-                this.io.print(`  🏛️ 세력 ${index + 1}: ${memberNames.join(', ')}${suffix}`);
+                this.io.print(`  세력 ${index + 1}: ${memberNames.join(', ')}${suffix}`);
             });
 
             // 영향력 있는 인물
@@ -530,7 +539,7 @@ export class GameCore {
             if (influential.length > 0) {
                 const names = influential
                     .map((id: string) => this.world.getCharacter(id)?.name || id);
-                this.io.print(`  👑 영향력 있는 인물: ${names.join(', ')}`);
+                this.io.print(`  영향력 있는 인물: ${names.join(', ')}`);
             }
         }
     }
@@ -538,27 +547,27 @@ export class GameCore {
     // ============ 상점 시스템 ============
     async handleShop() {
         const location = this.world.getLocation(this.player.location);
-        this.io.printHeader(`🏪 ${location?.name || '마을'} 상점`);
+        this.io.printHeader(`${location?.name || '마을'} 상점`);
 
-        const goods: Array<{ id: string, name: string, emoji: string }> = [
-            { id: 'food', name: '식량', emoji: '🍞' },
-            { id: 'weapons', name: '무기', emoji: '⚔️' },
-            { id: 'medicine', name: '약품', emoji: '💊' },
-            { id: 'materials', name: '재료', emoji: '🪵' },
-            { id: 'luxury', name: '사치품', emoji: '💎' },
+        const goods: Array<{ id: string, name: string }> = [
+            { id: 'food', name: '식량' },
+            { id: 'weapons', name: '무기' },
+            { id: 'medicine', name: '약품' },
+            { id: 'materials', name: '재료' },
+            { id: 'luxury', name: '사치품' },
         ];
 
         // 가격 표시
-        this.io.print('\n📋 현재 시세:');
+        this.io.print('\n현재 시세:');
         goods.forEach(g => {
             const price = this.economy.getPrice(this.player.location, g.id as any);
-            this.io.print(`  ${g.emoji} ${g.name}: ${price.toFixed(0)} 골드`);
+            this.io.print(`  ${g.name}: ${price.toFixed(0)} 골드`);
         });
 
-        this.io.print(`\n💰 보유 자원: ${this.player.resources} 골드`);
+        this.io.print(`\n보유 자원: ${this.player.resources} 골드`);
 
         // 행동 선택
-        const shopOptions = ['🛒 구매하기', '💰 판매하기', '🚪 나가기'];
+        const shopOptions = ['구매하기', '판매하기', '나가기'];
         const actionIndex = await this.io.promptChoice(shopOptions);
 
         if (actionIndex === 0) { // 구매
@@ -568,10 +577,10 @@ export class GameCore {
         }
     }
 
-    async handleBuy(goods: Array<{ id: string, name: string, emoji: string }>) {
+    async handleBuy(goods: Array<{ id: string, name: string }>) {
         const buyOptions = goods.map(g => {
             const price = this.economy.getPrice(this.player.location, g.id as any);
-            return `${g.emoji} ${g.name} (${price.toFixed(0)}골드)`;
+            return `${g.name} (${price.toFixed(0)}골드)`;
         });
         buyOptions.push('취소');
 
@@ -583,7 +592,7 @@ export class GameCore {
 
         const maxBuy = Math.floor(this.player.resources / price);
         if (maxBuy <= 0) {
-            this.io.print('❌ 자원이 부족합니다!');
+            this.io.print('[실패] 자원이 부족합니다!');
             return;
         }
 
@@ -601,15 +610,15 @@ export class GameCore {
             // 인벤토리에 추가 (간단히 player에 저장)
             if (!this.player.inventory) this.player.inventory = {};
             this.player.inventory[selectedGoods.id] = (this.player.inventory[selectedGoods.id] || 0) + quantity;
-            this.io.print(`✅ ${selectedGoods.name} ${quantity}개를 ${result.cost.toFixed(0)}골드에 구매했습니다!`);
+            this.io.print(`[완료] ${selectedGoods.name} ${quantity}개를 ${result.cost.toFixed(0)}골드에 구매했습니다!`);
         } else {
-            this.io.print('❌ 구매 실패! 재고가 부족합니다.');
+            this.io.print('[실패] 구매 실패! 재고가 부족합니다.');
         }
     }
 
-    async handleSell(goods: Array<{ id: string, name: string, emoji: string }>) {
+    async handleSell(goods: Array<{ id: string, name: string }>) {
         if (!this.player.inventory || Object.keys(this.player.inventory).length === 0) {
-            this.io.print('❌ 판매할 물품이 없습니다.');
+            this.io.print('[실패] 판매할 물품이 없습니다.');
             return;
         }
 
@@ -620,14 +629,14 @@ export class GameCore {
             const owned = this.player.inventory?.[g.id] || 0;
             if (owned > 0) {
                 const price = this.economy.getPrice(this.player.location, g.id as any) * 0.8;
-                sellOptions.push(`${g.emoji} ${g.name} x${owned} (개당 ${price.toFixed(0)}골드)`);
+                sellOptions.push(`${g.name} x${owned} (개당 ${price.toFixed(0)}골드)`);
                 availableGoods.push(g);
             }
         });
         sellOptions.push('취소');
 
         if (availableGoods.length === 0) {
-            this.io.print('❌ 판매할 물품이 없습니다.');
+            this.io.print('[실패] 판매할 물품이 없습니다.');
             return;
         }
 
@@ -647,13 +656,84 @@ export class GameCore {
         if (result.success) {
             this.player.resources += result.revenue;
             this.player.inventory[selectedGoods.id] -= quantity;
-            this.io.print(`✅ ${selectedGoods.name} ${quantity}개를 ${result.revenue.toFixed(0)}골드에 판매했습니다!`);
+            this.io.print(`[완료] ${selectedGoods.name} ${quantity}개를 ${result.revenue.toFixed(0)}골드에 판매했습니다!`);
         }
+    }
+
+    // ============ 사냥/채집 시스템 ============
+    async handleHunt() {
+        this.io.printHeader('사냥/채집');
+
+        const ecoInfo = this.ecosystem.getEcosystemInfo(this.player.location);
+        if (!ecoInfo || ecoInfo.species.length === 0) {
+            this.io.print('\n이 주변에는 사냥할 것이 없다.');
+            return;
+        }
+
+        this.io.print('\n주변에서 발견된 생물:');
+        const huntableSpecies = ecoInfo.species.filter(s => s.type !== 'plant' && s.population > 10);
+        const gatherableSpecies = ecoInfo.species.filter(s => s.type === 'plant' && s.population > 10);
+
+        if (huntableSpecies.length === 0 && gatherableSpecies.length === 0) {
+            this.io.print('  사냥하거나 채집할 것이 없다.');
+            this.processTurn();
+            return;
+        }
+
+        // 사냥 가능한 동물 표시
+        if (huntableSpecies.length > 0) {
+            this.io.print('\n[사냥 가능]');
+            huntableSpecies.forEach((s, i) => {
+                this.io.print(`  ${i + 1}. ${s.name} (약 ${s.population}마리)`);
+            });
+        }
+
+        // 채집 가능한 식물 표시
+        if (gatherableSpecies.length > 0) {
+            this.io.print('\n[채집 가능]');
+            gatherableSpecies.forEach((s, i) => {
+                this.io.print(`  ${huntableSpecies.length + i + 1}. ${s.name}`);
+            });
+        }
+
+        const allSpecies = [...huntableSpecies, ...gatherableSpecies];
+        const options = allSpecies.map(s => s.name);
+        options.push('돌아가기');
+
+        const choice = await this.io.promptChoice(options);
+        if (choice >= allSpecies.length) {
+            return;
+        }
+
+        const selected = allSpecies[choice];
+        const isHunting = choice < huntableSpecies.length;
+
+        if (isHunting) {
+            // 사냥 시도
+            this.io.print(`\n${selected.name}을(를) 사냥한다...`);
+            const result = this.ecosystem.hunt(this.player.location, selected.name.toLowerCase(), 3);
+
+            if (result.success && result.caught > 0) {
+                const meatGained = result.caught * 5;
+                this.player.resources += meatGained;
+                this.io.print(`[성공] ${result.caught}마리를 잡았다! +${meatGained} 자원`);
+            } else {
+                this.io.print('[실패] 사냥에 실패했다.');
+            }
+        } else {
+            // 채집 시도
+            this.io.print(`\n${selected.name}을(를) 채집한다...`);
+            const gatherAmount = Math.floor(Math.random() * 3) + 1;
+            this.player.resources += gatherAmount * 2;
+            this.io.print(`[성공] ${gatherAmount}개를 채집했다! +${gatherAmount * 2} 자원`);
+        }
+
+        this.processTurn();
     }
 
     // ============ 탐색/전투 ============
     async handleExplore() {
-        this.io.print('\n🔍 주변을 탐색한다...');
+        this.io.print('\n주변을 탐색한다...');
 
         if (Math.random() < 0.7) {
             await this.runCombat();
@@ -674,28 +754,28 @@ export class GameCore {
 
         const enemy = { ...enemyData, maxHp: enemyData.hp };
 
-        this.io.print(`\n⚔️ ${enemy.name}이(가) 나타났다!`);
+        this.io.print(`\n${enemy.name}이(가) 나타났다!`);
 
         while (enemy.hp > 0 && this.player.stats.currentHp > 0) {
             this.io.print(`\n[${enemy.name}] HP: ${enemy.hp}/${enemy.maxHp}`);
             this.io.print(`[${this.player.name}] HP: ${this.player.stats.currentHp}/${this.player.stats.maxHp}`);
 
-            const choiceIndex = await this.io.promptChoice(['⚔️ 공격', '🛡️ 방어', '🏃 도망']);
+            const choiceIndex = await this.io.promptChoice(['공격', '방어', '도망']);
 
             if (choiceIndex === 0) { // 공격
                 const damage = Math.max(1, (this.player.stats.attack || 10) - (enemy.defense || 0));
                 const isCrit = Math.random() < (this.player.stats.critRate || 0.05);
                 const finalDamage = isCrit ? Math.floor(damage * 1.5) : damage;
                 enemy.hp = Math.max(0, enemy.hp - finalDamage);
-                this.io.print(`⚔️ ${this.player.name}의 공격! ${finalDamage} 피해${isCrit ? '(치명타!)' : ''}`);
+                this.io.print(`${this.player.name}의 공격! ${finalDamage} 피해${isCrit ? '(치명타!)' : ''}`);
             } else if (choiceIndex === 1) { // 방어
-                this.io.print(`🛡️ 방어 태세를 취했습니다.`);
+                this.io.print(`방어 태세를 취했습니다.`);
             } else if (choiceIndex === 2) { // 도망
                 if (Math.random() < 0.5) {
-                    this.io.print('🏃 도망쳤습니다!');
+                    this.io.print('도망쳤습니다!');
                     return;
                 }
-                this.io.print('❌ 도망에 실패했습니다!');
+                this.io.print('[실패] 도망에 실패했습니다!');
             }
 
             if (enemy.hp <= 0) break;
@@ -704,10 +784,10 @@ export class GameCore {
             const isDefending = choiceIndex === 1;
             const enemyDmg = Math.max(1, (enemy.attack || 5) - (this.player.stats.defense * (isDefending ? 2 : 1)));
             this.player.stats.currentHp = Math.max(0, this.player.stats.currentHp - enemyDmg);
-            this.io.print(`💥 ${enemy.name}의 공격! ${enemyDmg} 피해`);
+            this.io.print(`${enemy.name}의 공격! ${enemyDmg} 피해`);
 
             if (this.player.stats.currentHp <= 0) {
-                this.io.print('💀 패배했습니다...');
+                this.io.print('[패배] 패배했습니다...');
                 this.player.stats.currentHp = Math.floor(this.player.stats.maxHp * 0.3);
                 this.player.location = 'village1';
                 this.io.print('...마을에서 깨어났습니다.');
@@ -716,9 +796,9 @@ export class GameCore {
         }
 
         if (enemy.hp <= 0) {
-            this.io.print(`🎉 승리! ${enemy.name}을(를) 처치했습니다.`);
+            this.io.print(`[승리] ${enemy.name}을(를) 처치했습니다.`);
             const exp = enemy.exp || 10;
-            this.io.print(`💰 ${exp} 경험치 획득`);
+            this.io.print(`${exp} 경험치 획득`);
             await this.handleLevelUp(exp);
         }
     }
@@ -726,8 +806,8 @@ export class GameCore {
     async handleLevelUp(exp: number) {
         const levelUp = LevelSystem.addExperience(this.player, exp);
         if (levelUp) {
-            this.io.print(`\n🎉 레벨 업! (Lv.${levelUp.level})`);
-            this.io.print(`💪 사용할 수 있는 스탯 포인트: ${levelUp.statPoints}`);
+            this.io.print(`\n[레벨업] (Lv.${levelUp.level})`);
+            this.io.print(`사용할 수 있는 스탯 포인트: ${levelUp.statPoints}`);
 
             while (this.player.statPoints > 0) {
                 this.io.print(`\n남은 포인트: ${this.player.statPoints}`);
@@ -751,7 +831,7 @@ export class GameCore {
                 if (statChoice === 5) break;
                 if (statMap[statChoice]) {
                     LevelSystem.distributeStat(this.player, statMap[statChoice]);
-                    this.io.print(`✅ ${statMap[statChoice]} 증가!`);
+                    this.io.print(`[완료] ${statMap[statChoice]} 증가!`);
                 }
             }
         }
@@ -764,9 +844,9 @@ export class GameCore {
         const finalSlot = slotName.trim() || 'slot1';
 
         if (this.saveSystem.saveGame(finalSlot, this.turnCount, this.player, this.world)) {
-            this.io.print(`✅ "${finalSlot}" 슬롯에 저장 완료!`);
+            this.io.print(`[완료] "${finalSlot}" 슬롯에 저장 완료!`);
         } else {
-            this.io.print('❌ 저장 실패');
+            this.io.print('[실패] 저장 실패');
         }
     }
 
@@ -792,9 +872,9 @@ export class GameCore {
                 this.saveSystem.restoreToWorld(saveData, this.world);
                 Object.assign(this.player, saveData.player);
                 this.turnCount = saveData.turnCount;
-                this.io.print(`✅ "${saves[loadIndex].slotName}" 불러오기 완료!`);
+                this.io.print(`[완료] "${saves[loadIndex].slotName}" 불러오기 완료!`);
             } else {
-                this.io.print('❌ 불러오기 실패');
+                this.io.print('[실패] 불러오기 실패');
             }
         }
     }
