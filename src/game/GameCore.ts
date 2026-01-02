@@ -155,7 +155,13 @@ export class GameCore {
             nearbyChars.forEach((c: Character, i: number) => {
                 const relation = this.world.relations.getRelation(this.player.id, c.id);
                 const trustIcon = relation.trust > 0.3 ? '😊' : relation.trust < -0.3 ? '😠' : '😐';
+                // NPC 인식 표시 (BeliefSystem 활용)
+                const perception = this.beliefSystem.getPerception(c, this.player.id);
+                const perceptionShort = perception.length > 20 ? perception.substring(0, 20) + '...' : perception;
                 this.io.print(`  ${i + 1}. ${c.title || ''} ${c.name} ${trustIcon}`);
+                if (perception && perception !== '중립적') {
+                    this.io.print(`      └ "${perceptionShort}"`);
+                }
             });
         }
 
@@ -170,6 +176,9 @@ export class GameCore {
             this.io.print(`  HP: ${this.player.stats.currentHp}/${this.player.stats.maxHp} | MP: ${this.player.stats.currentMp}/${this.player.stats.maxMp}`);
             this.io.print(`  레벨: ${this.player.level || 1} (EXP: ${this.player.experience || 0}/${this.player.expToNextLevel || 100})`);
         }
+
+        // 세계 상황 알림 (질병, 전쟁, 경제)
+        this.renderWorldAlerts();
 
         // 최근 소식
         const recentEvents = this.world.getRecentEvents(3);
@@ -209,8 +218,13 @@ export class GameCore {
         // 기타 행동
         options.push({ text: '주변 관찰하기', action: 'observe' });
 
-        // 위험한 장소에서 탐색(전투) 가능
+        // 상점 (마을/도시에서만)
         const currentLocation = this.world.getLocation(this.player.location);
+        if (currentLocation?.type === 'city' || currentLocation?.type === 'village') {
+            options.push({ text: '🏪 상점', action: 'shop' });
+        }
+
+        // 위험한 장소에서 탐색(전투) 가능
         const dangerLevel = (currentLocation as any)?.dangerLevel || 0;
         if (dangerLevel > 0 || currentLocation?.type === 'wilderness' || currentLocation?.type === 'dungeon') {
             options.push({ text: '탐색하기 ⚔️', action: 'explore' });
@@ -304,6 +318,10 @@ export class GameCore {
                 await this.handleExplore();
                 return true;
 
+            case 'shop':
+                await this.handleShop();
+                return false;
+
             case 'status':
                 this.renderDetailedStatus();
                 return false;
@@ -392,6 +410,157 @@ export class GameCore {
             const trustBar = '█'.repeat(Math.max(0, Math.floor((rel.trust + 1) * 5))) + '░'.repeat(10 - Math.max(0, Math.floor((rel.trust + 1) * 5)));
             this.io.print(`  ${c.name}: [${trustBar}] 신뢰 ${(rel.trust * 100).toFixed(0)}%`);
         });
+    }
+
+    // ============ 세계 상황 알림 ============
+    renderWorldAlerts() {
+        const alerts: string[] = [];
+
+        // 질병 알림
+        if (this.world.globalState.plagueActive) {
+            alerts.push('🦠 역병이 퍼지고 있습니다! 약값이 치솟고 있습니다.');
+        }
+
+        // 전쟁 알림
+        if (this.world.globalState.warActive) {
+            alerts.push('⚔️ 전쟁 중! 무기 수요가 급증하고 있습니다.');
+        }
+
+        // 경제 상황
+        const economySummary = this.economy.getSummary();
+        if (economySummary.inflationRate > 0.1) {
+            alerts.push(`📈 인플레이션 ${(economySummary.inflationRate * 100).toFixed(0)}%! 물가가 오르고 있습니다.`);
+        } else if (economySummary.inflationRate < -0.05) {
+            alerts.push('📉 경기 침체! 물가가 떨어지고 있습니다.');
+        }
+
+        // 계절 알림
+        const season = this.world.globalState.season;
+        if (season === 'winter') {
+            alerts.push('❄️ 겨울입니다. 식량 수요가 높습니다.');
+        }
+
+        // 알림 출력
+        if (alerts.length > 0) {
+            this.io.printSection('세계 상황');
+            alerts.forEach(alert => this.io.print(`  ${alert}`));
+        }
+    }
+
+    // ============ 상점 시스템 ============
+    async handleShop() {
+        const location = this.world.getLocation(this.player.location);
+        this.io.printHeader(`🏪 ${location?.name || '마을'} 상점`);
+
+        const goods: Array<{ id: string, name: string, emoji: string }> = [
+            { id: 'food', name: '식량', emoji: '🍞' },
+            { id: 'weapons', name: '무기', emoji: '⚔️' },
+            { id: 'medicine', name: '약품', emoji: '💊' },
+            { id: 'materials', name: '재료', emoji: '🪵' },
+            { id: 'luxury', name: '사치품', emoji: '💎' },
+        ];
+
+        // 가격 표시
+        this.io.print('\n📋 현재 시세:');
+        goods.forEach(g => {
+            const price = this.economy.getPrice(this.player.location, g.id as any);
+            this.io.print(`  ${g.emoji} ${g.name}: ${price.toFixed(0)} 골드`);
+        });
+
+        this.io.print(`\n💰 보유 자원: ${this.player.resources} 골드`);
+
+        // 행동 선택
+        const shopOptions = ['🛒 구매하기', '💰 판매하기', '🚪 나가기'];
+        const actionIndex = await this.io.promptChoice(shopOptions);
+
+        if (actionIndex === 0) { // 구매
+            await this.handleBuy(goods);
+        } else if (actionIndex === 1) { // 판매
+            await this.handleSell(goods);
+        }
+    }
+
+    async handleBuy(goods: Array<{ id: string, name: string, emoji: string }>) {
+        const buyOptions = goods.map(g => {
+            const price = this.economy.getPrice(this.player.location, g.id as any);
+            return `${g.emoji} ${g.name} (${price.toFixed(0)}골드)`;
+        });
+        buyOptions.push('취소');
+
+        const itemIndex = await this.io.promptChoice(buyOptions);
+        if (itemIndex >= goods.length) return;
+
+        const selectedGoods = goods[itemIndex];
+        const price = this.economy.getPrice(this.player.location, selectedGoods.id as any);
+
+        const maxBuy = Math.floor(this.player.resources / price);
+        if (maxBuy <= 0) {
+            this.io.print('❌ 자원이 부족합니다!');
+            return;
+        }
+
+        this.io.print(`\n최대 ${maxBuy}개 구매 가능 (1개당 ${price.toFixed(0)}골드)`);
+        const quantityChoice = await this.io.promptChoice(['1개', '5개', '10개', '최대', '취소']);
+
+        const quantities = [1, 5, 10, maxBuy];
+        if (quantityChoice >= 4) return;
+
+        const quantity = Math.min(quantities[quantityChoice], maxBuy);
+        const result = this.economy.buy(this.player.location, selectedGoods.id as any, quantity);
+
+        if (result.success) {
+            this.player.resources -= result.cost;
+            // 인벤토리에 추가 (간단히 player에 저장)
+            if (!this.player.inventory) this.player.inventory = {};
+            this.player.inventory[selectedGoods.id] = (this.player.inventory[selectedGoods.id] || 0) + quantity;
+            this.io.print(`✅ ${selectedGoods.name} ${quantity}개를 ${result.cost.toFixed(0)}골드에 구매했습니다!`);
+        } else {
+            this.io.print('❌ 구매 실패! 재고가 부족합니다.');
+        }
+    }
+
+    async handleSell(goods: Array<{ id: string, name: string, emoji: string }>) {
+        if (!this.player.inventory || Object.keys(this.player.inventory).length === 0) {
+            this.io.print('❌ 판매할 물품이 없습니다.');
+            return;
+        }
+
+        const sellOptions: string[] = [];
+        const availableGoods: typeof goods = [];
+
+        goods.forEach(g => {
+            const owned = this.player.inventory?.[g.id] || 0;
+            if (owned > 0) {
+                const price = this.economy.getPrice(this.player.location, g.id as any) * 0.8;
+                sellOptions.push(`${g.emoji} ${g.name} x${owned} (개당 ${price.toFixed(0)}골드)`);
+                availableGoods.push(g);
+            }
+        });
+        sellOptions.push('취소');
+
+        if (availableGoods.length === 0) {
+            this.io.print('❌ 판매할 물품이 없습니다.');
+            return;
+        }
+
+        const itemIndex = await this.io.promptChoice(sellOptions);
+        if (itemIndex >= availableGoods.length) return;
+
+        const selectedGoods = availableGoods[itemIndex];
+        const owned = this.player.inventory[selectedGoods.id];
+
+        const quantityChoice = await this.io.promptChoice(['1개', '5개', '전부', '취소']);
+        const quantities = [1, 5, owned];
+        if (quantityChoice >= 3) return;
+
+        const quantity = Math.min(quantities[quantityChoice], owned);
+        const result = this.economy.sell(this.player.location, selectedGoods.id as any, quantity);
+
+        if (result.success) {
+            this.player.resources += result.revenue;
+            this.player.inventory[selectedGoods.id] -= quantity;
+            this.io.print(`✅ ${selectedGoods.name} ${quantity}개를 ${result.revenue.toFixed(0)}골드에 판매했습니다!`);
+        }
     }
 
     // ============ 탐색/전투 ============
