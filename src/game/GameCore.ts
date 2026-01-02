@@ -765,7 +765,7 @@ export class GameCore {
         if (choice < activeQuests.length) {
             // 진행 중인 퀘스트 상세 보기
             const quest = activeQuests[choice];
-            this.showQuestDetails(quest);
+            await this.showQuestDetails(quest);
         } else {
             // 퀘스트 수락
             const quest = availableQuests[choice - activeQuests.length];
@@ -774,7 +774,7 @@ export class GameCore {
         }
     }
 
-    showQuestDetails(quest: Quest) {
+    async showQuestDetails(quest: Quest) {
         this.io.print(`\n== ${quest.title} ==`);
         this.io.print(quest.description);
         this.io.print('\n[목표]');
@@ -786,17 +786,18 @@ export class GameCore {
 
         // 모든 목표 완료 시 퀘스트 완료 처리
         if (quest.objectives.every(obj => obj.current >= obj.required)) {
-            this.completeQuest(quest);
+            await this.completeQuest(quest);
         }
     }
 
-    completeQuest(quest: Quest) {
+    async completeQuest(quest: Quest) {
         quest.status = 'completed';
         this.io.print(`\n[퀘스트 완료] "${quest.title}"!`);
 
         if (quest.rewards.exp) {
             this.io.print(`  +${quest.rewards.exp} 경험치`);
-            this.player.experience = (this.player.experience || 0) + quest.rewards.exp;
+            // 레벨업 처리 위임
+            await this.handleLevelUp(quest.rewards.exp);
         }
         if (quest.rewards.resources) {
             this.io.print(`  +${quest.rewards.resources} 자원`);
@@ -877,6 +878,9 @@ export class GameCore {
                 const meatGained = result.caught * 5;
                 this.player.resources += meatGained;
                 this.io.print(`[성공] ${result.caught}마리를 잡았다! +${meatGained} 자원`);
+
+                // 퀘스트 업데이트
+                this.updateQuestProgress('kill', selected.name, result.caught);
             } else {
                 this.io.print('[실패] 사냥에 실패했다.');
             }
@@ -959,6 +963,10 @@ export class GameCore {
             this.io.print(`[승리] ${enemy.name}을(를) 처치했습니다.`);
             const exp = enemy.exp || 10;
             this.io.print(`${exp} 경험치 획득`);
+
+            // 퀘스트 업데이트
+            this.updateQuestProgress('kill', enemy.name, 1);
+
             await this.handleLevelUp(exp);
         }
     }

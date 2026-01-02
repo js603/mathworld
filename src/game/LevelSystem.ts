@@ -89,7 +89,8 @@ export class LevelSystem {
      * 경험치 획득
      */
     static addExperience(character: Character, amount: number): LevelUpReward | null {
-        if (!character.experience || !character.expToNextLevel || !character.level) {
+        // 초기화되지 않은 경우만 체크 (experience=0은 정상)
+        if (character.experience === undefined || character.expToNextLevel === undefined || character.level === undefined) {
             return null;
         }
 
