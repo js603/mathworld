@@ -259,6 +259,9 @@ export class GameCore {
         this.weather.update();
         this.disease.update();
 
+        // NPC 자율 행동 (UtilityAI 기반)
+        this.processNPCAutonomousActions();
+
         // NPC 행동
         this.eventGenerator.generateNPCActions();
 
@@ -268,6 +271,8 @@ export class GameCore {
             if (e.isPublic) {
                 this.io.print(`\n📢 ${this.textRenderer.describeEvent(e, 'novel')}`);
             }
+            // 소문 확산
+            this.simulateRumorSpread(e);
         });
 
         // 임계값 체크
@@ -275,6 +280,63 @@ export class GameCore {
         thresholdEvents.forEach((e: any) => {
             this.io.print(`\n⚠️ [중대 사건] ${this.textRenderer.describeEvent(e, 'novel')}`);
         });
+    }
+
+    // ============ NPC 자율 행동 ============
+    processNPCAutonomousActions() {
+        const npcs = this.world.getAllCharacters().filter((c: Character) => c.id !== this.player.id);
+
+        npcs.forEach((npc: Character) => {
+            // 각 NPC가 현재 상황을 평가하고 행동 결정
+            const nearbyChars = this.world.getCharactersAt(npc.location)
+                .filter((c: Character) => c.id !== npc.id);
+
+            if (nearbyChars.length > 0 && Math.random() < 0.3) {
+                // 30% 확률로 자율 행동 실행
+                const target = nearbyChars[Math.floor(Math.random() * nearbyChars.length)];
+                const action = this.decideNPCAction(npc, target);
+                if (action) {
+                    this.io.print(`\n💭 ${npc.name}이(가) ${target.name}에게 ${action}을(를) 했다.`);
+                    // 관계 변화 (간단화)
+                    const change = action === '친밀한 대화' ? 0.05 : action === '협력 제안' ? 0.1 : -0.05;
+                    this.world.relations.modifyRelation(npc.id, target.id, { trust: change });
+                }
+            }
+        });
+    }
+
+    decideNPCAction(npc: Character, target: Character): string | null {
+        const relation = this.world.relations.getRelation(npc.id, target.id);
+
+        // 관계에 따른 행동 결정
+        if (relation.trust > 0.5) {
+            return '친밀한 대화';
+        } else if (relation.trust > 0.2) {
+            return '협력 제안';
+        } else if (relation.trust < -0.3) {
+            return '경계';
+        }
+        return null;
+    }
+
+    // ============ 소문 확산 ============
+    simulateRumorSpread(event: any) {
+        if (!event.isPublic) return;
+
+        const source = event.participants?.[0];
+        if (!source) return;
+
+        // 소문 확산 시뮬레이션
+        const spreadProb = (rel: any) => Math.max(0.1, rel.trust + 0.3);
+        const informed = this.world.relations.simulateRumorSpread(source, 2, spreadProb);
+
+        if (informed.size > 2) {
+            const names = (Array.from(informed) as string[])
+                .slice(0, 3)
+                .map((id: string) => this.world.getCharacter(id)?.name || id);
+            const suffix = informed.size > 3 ? ` 외 ${informed.size - 3}명` : '';
+            this.io.print(`  🗣️ 소문이 퍼지고 있다: ${names.join(', ')}${suffix}이(가) 알게 됨`);
+        }
     }
 
     // ============ 행동 처리 ============
@@ -444,6 +506,32 @@ export class GameCore {
         if (alerts.length > 0) {
             this.io.printSection('세계 상황');
             alerts.forEach(alert => this.io.print(`  ${alert}`));
+        }
+
+        // 파벌 정보 표시
+        this.renderFactionInfo();
+    }
+
+    // ============ 파벌 정보 표시 ============
+    renderFactionInfo() {
+        const clusters = this.world.relations.getClusters(0.2);
+        if (clusters.length > 0) {
+            this.io.printSection('정치 세력');
+            clusters.forEach((cluster: string[], index: number) => {
+                const memberNames = cluster
+                    .map((id: string) => this.world.getCharacter(id)?.name || id)
+                    .slice(0, 3);
+                const suffix = cluster.length > 3 ? ` 외 ${cluster.length - 3}명` : '';
+                this.io.print(`  🏛️ 세력 ${index + 1}: ${memberNames.join(', ')}${suffix}`);
+            });
+
+            // 영향력 있는 인물
+            const influential = this.world.relations.getMostInfluential(2);
+            if (influential.length > 0) {
+                const names = influential
+                    .map((id: string) => this.world.getCharacter(id)?.name || id);
+                this.io.print(`  👑 영향력 있는 인물: ${names.join(', ')}`);
+            }
         }
     }
 
