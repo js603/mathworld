@@ -240,3 +240,45 @@ export type InstabilityType =
     | 'trust_collapse'       // 신뢰 붕괴
     | 'information_asymmetry' // 정보 비대칭
     | 'fear_spike';          // 공포 급등
+
+// ============ 퀘스트 시스템 ============
+
+export type QuestStatus = 'available' | 'active' | 'completed' | 'failed';
+
+export type QuestObjectiveType =
+    | 'kill'           // 몬스터 처치
+    | 'gather'         // 자원 수집
+    | 'deliver'        // 아이템 전달
+    | 'talk'           // NPC와 대화
+    | 'explore'        // 장소 탐험
+    | 'survive';       // 생존
+
+export interface QuestObjective {
+    type: QuestObjectiveType;
+    target: string;      // 목표 대상 (몬스터명, NPC ID, 장소 ID 등)
+    required: number;    // 필요 수량
+    current: number;     // 현재 진행도
+    description: string; // 목표 설명
+}
+
+export interface Quest {
+    id: EntityId;
+    title: string;
+    description: string;
+    giver?: EntityId;    // 퀘스트 의뢰인 NPC
+
+    status: QuestStatus;
+    objectives: QuestObjective[];
+
+    rewards: {
+        exp?: number;
+        resources?: number;
+        items?: EntityId[];
+        reputation?: number;
+    };
+
+    level: number;       // 권장 레벨
+    timeLimit?: number;  // 턴 제한 (없으면 무제한)
+    turnsRemaining?: number;
+}
+

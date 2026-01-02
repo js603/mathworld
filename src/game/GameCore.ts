@@ -11,6 +11,7 @@ import {
     CharacterUtils,
     Character,
     Choice,
+    Quest,
 } from '../core';
 import {
     FeedbackLoop,
@@ -59,6 +60,7 @@ export class GameCore {
     private gameRunning = true;
     private inCombat = false;
     private currentCombat: Combat | null = null;
+    private quests: Quest[] = [];
 
     // I/O 및 저장 시스템 (주입받음)
     private io: GameIO;
@@ -118,6 +120,47 @@ export class GameCore {
         this.currentTarget = null;
         this.inCombat = false;
         this.currentCombat = null;
+
+        // 기본 퀘스트 초기화
+        this.initializeQuests();
+    }
+
+    initializeQuests() {
+        this.quests = [
+            {
+                id: 'quest_hunt_wolves',
+                title: '늑대 토벌',
+                description: '마을 주변에서 늑대가 출몰하고 있습니다. 늑대를 처치해 주세요.',
+                status: 'available',
+                objectives: [
+                    { type: 'kill', target: '늑대', required: 3, current: 0, description: '늑대 3마리 처치' }
+                ],
+                rewards: { exp: 50, resources: 30 },
+                level: 1
+            },
+            {
+                id: 'quest_gather_herbs',
+                title: '약초 수집',
+                description: '황야에서 약초를 채집해 오세요.',
+                status: 'available',
+                objectives: [
+                    { type: 'gather', target: '풀', required: 5, current: 0, description: '풀 5개 채집' }
+                ],
+                rewards: { exp: 30, resources: 20 },
+                level: 1
+            },
+            {
+                id: 'quest_meet_king',
+                title: '왕을 알현하라',
+                description: '왕도에 가서 왕을 만나세요.',
+                status: 'available',
+                objectives: [
+                    { type: 'talk', target: '왕', required: 1, current: 0, description: '왕과 대화' }
+                ],
+                rewards: { exp: 100, resources: 50, reputation: 10 },
+                level: 2
+            }
+        ];
     }
 
     // ============ 감정 이름 ============
@@ -235,6 +278,7 @@ export class GameCore {
             options.push({ text: '사냥/채집', action: 'hunt' });
         }
 
+        options.push({ text: '퀘스트', action: 'quests' });
         options.push({ text: '상세 상태 보기', action: 'status' });
         options.push({ text: '저장하기', action: 'save' });
         options.push({ text: '불러오기', action: 'load' });
@@ -392,6 +436,10 @@ export class GameCore {
             case 'hunt':
                 await this.handleHunt();
                 return true;
+
+            case 'quests':
+                await this.handleQuests();
+                return false;
 
             case 'status':
                 this.renderDetailedStatus();
@@ -658,6 +706,118 @@ export class GameCore {
             this.player.inventory[selectedGoods.id] -= quantity;
             this.io.print(`[완료] ${selectedGoods.name} ${quantity}개를 ${result.revenue.toFixed(0)}골드에 판매했습니다!`);
         }
+    }
+
+    // ============ 퀘스트 시스템 ============
+    async handleQuests() {
+        this.io.printHeader('퀘스트');
+
+        const activeQuests = this.quests.filter(q => q.status === 'active');
+        const availableQuests = this.quests.filter(q => q.status === 'available');
+        const completedQuests = this.quests.filter(q => q.status === 'completed');
+
+        // 진행 중인 퀘스트 표시
+        if (activeQuests.length > 0) {
+            this.io.print('\n[진행 중]');
+            activeQuests.forEach((q, i) => {
+                this.io.print(`  ${i + 1}. ${q.title} (Lv.${q.level})`);
+                q.objectives.forEach(obj => {
+                    const progress = `${obj.current}/${obj.required}`;
+                    const isDone = obj.current >= obj.required ? '[완료]' : '';
+                    this.io.print(`     - ${obj.description}: ${progress} ${isDone}`);
+                });
+            });
+        }
+
+        // 수락 가능한 퀘스트 표시
+        if (availableQuests.length > 0) {
+            this.io.print('\n[수락 가능]');
+            availableQuests.forEach((q, i) => {
+                this.io.print(`  ${activeQuests.length + i + 1}. ${q.title} (Lv.${q.level})`);
+                this.io.print(`     ${q.description}`);
+                const rewards = [];
+                if (q.rewards.exp) rewards.push(`경험치 ${q.rewards.exp}`);
+                if (q.rewards.resources) rewards.push(`자원 ${q.rewards.resources}`);
+                this.io.print(`     보상: ${rewards.join(', ')}`);
+            });
+        }
+
+        // 완료된 퀘스트 수 표시
+        if (completedQuests.length > 0) {
+            this.io.print(`\n[완료된 퀘스트: ${completedQuests.length}개]`);
+        }
+
+        if (activeQuests.length === 0 && availableQuests.length === 0) {
+            this.io.print('\n현재 진행 가능한 퀘스트가 없습니다.');
+            return;
+        }
+
+        // 선택지 구성
+        const options: string[] = [];
+        activeQuests.forEach(q => options.push(`[확인] ${q.title}`));
+        availableQuests.forEach(q => options.push(`[수락] ${q.title}`));
+        options.push('돌아가기');
+
+        const choice = await this.io.promptChoice(options);
+
+        if (choice >= options.length - 1) return;
+
+        if (choice < activeQuests.length) {
+            // 진행 중인 퀘스트 상세 보기
+            const quest = activeQuests[choice];
+            this.showQuestDetails(quest);
+        } else {
+            // 퀘스트 수락
+            const quest = availableQuests[choice - activeQuests.length];
+            quest.status = 'active';
+            this.io.print(`\n[수락] "${quest.title}" 퀘스트를 수락했습니다!`);
+        }
+    }
+
+    showQuestDetails(quest: Quest) {
+        this.io.print(`\n== ${quest.title} ==`);
+        this.io.print(quest.description);
+        this.io.print('\n[목표]');
+        quest.objectives.forEach(obj => {
+            const progress = `${obj.current}/${obj.required}`;
+            const status = obj.current >= obj.required ? '[완료]' : '[진행중]';
+            this.io.print(`  ${status} ${obj.description}: ${progress}`);
+        });
+
+        // 모든 목표 완료 시 퀘스트 완료 처리
+        if (quest.objectives.every(obj => obj.current >= obj.required)) {
+            this.completeQuest(quest);
+        }
+    }
+
+    completeQuest(quest: Quest) {
+        quest.status = 'completed';
+        this.io.print(`\n[퀘스트 완료] "${quest.title}"!`);
+
+        if (quest.rewards.exp) {
+            this.io.print(`  +${quest.rewards.exp} 경험치`);
+            this.player.experience = (this.player.experience || 0) + quest.rewards.exp;
+        }
+        if (quest.rewards.resources) {
+            this.io.print(`  +${quest.rewards.resources} 자원`);
+            this.player.resources += quest.rewards.resources;
+        }
+        if (quest.rewards.reputation) {
+            this.io.print(`  +${quest.rewards.reputation} 평판`);
+        }
+    }
+
+    updateQuestProgress(type: string, target: string, amount: number = 1) {
+        const activeQuests = this.quests.filter(q => q.status === 'active');
+
+        activeQuests.forEach(quest => {
+            quest.objectives.forEach(obj => {
+                if (obj.type === type && obj.target === target && obj.current < obj.required) {
+                    obj.current = Math.min(obj.current + amount, obj.required);
+                    this.io.print(`[퀘스트] ${quest.title}: ${obj.description} (${obj.current}/${obj.required})`);
+                }
+            });
+        });
     }
 
     // ============ 사냥/채집 시스템 ============
