@@ -1,0 +1,421 @@
+{
+  "version": "1.0.0",
+  "timestamp": "2026-01-02T02:43:01.626Z",
+  "turnCount": 28,
+  "player": {
+    "id": "char_1767320398621_9jrfupfop",
+    "name": "모험가",
+    "personality": {
+      "ambition": 0.5,
+      "loyalty": 0.5,
+      "morality": 0.5,
+      "courage": 0.5,
+      "cunning": 0.5
+    },
+    "emotion": {
+      "trust": 0.5,
+      "fear": 0,
+      "anger": 0,
+      "joy": 0.07134806557659966,
+      "despair": 0
+    },
+    "location": "village1",
+    "resources": 70,
+    "power": 10,
+    "memory": [],
+    "beliefs": {},
+    "isPlayer": true,
+    "stats": {
+      "maxHp": 100,
+      "currentHp": 15,
+      "maxMp": 50,
+      "currentMp": 50,
+      "attack": 10,
+      "defense": 5,
+      "speed": 10,
+      "critRate": 0.05,
+      "critDamage": 1.5
+    },
+    "level": 1,
+    "experience": 0,
+    "expToNextLevel": 282,
+    "statPoints": 0,
+    "skillPoints": 0,
+    "skills": [],
+    "inventory": [],
+    "equipment": {}
+  },
+  "characters": [
+    {
+      "id": "char_1767320398621_4ikrxp63i",
+      "name": "왕",
+      "title": "아르테미스 왕",
+      "personality": {
+        "ambition": 0.7,
+        "loyalty": 0.6,
+        "morality": 0.6,
+        "courage": 0.7,
+        "cunning": 0.5
+      },
+      "emotion": {
+        "trust": 0.5,
+        "fear": 0,
+        "anger": 0,
+        "joy": 0.07134806557659966,
+        "despair": 0
+      },
+      "location": "capital",
+      "resources": 10000,
+      "power": 100,
+      "memory": [
+        {
+          "eventId": "event_1767320487678_fvlyv98zw",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 4
+        },
+        {
+          "eventId": "event_1767320493952_bng4xd38f",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 5
+        },
+        {
+          "eventId": "event_1767320499308_673r2vf5k",
+          "interpretation": "모험가이(가) [절박하게] 친근하게 대화한다",
+          "emotionalImpact": {},
+          "timestamp": 6
+        },
+        {
+          "eventId": "event_1767321676432_2jwtpljnb",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 7
+        },
+        {
+          "eventId": "event_1767321680315_kt0rjfh90",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 8
+        },
+        {
+          "eventId": "event_1767321681967_1zi5uyudl",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 9
+        },
+        {
+          "eventId": "event_1767321685084_ftyfj7z3j",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 10
+        },
+        {
+          "eventId": "event_1767321694303_vjyjujysg",
+          "interpretation": "모험가이(가) [절박하게] 친근하게 대화한다",
+          "emotionalImpact": {},
+          "timestamp": 11
+        },
+        {
+          "eventId": "event_1767321703232_bvjn9cl0t",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 12
+        },
+        {
+          "eventId": "event_1767321705134_po2tz1let",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 13
+        },
+        {
+          "eventId": "event_1767321710519_0zqz7kww8",
+          "interpretation": "모험가이(가) [절박하게] 도움을 제공한다",
+          "emotionalImpact": {},
+          "timestamp": 14
+        },
+        {
+          "eventId": "event_1767321712713_d4c7bybyw",
+          "interpretation": "모험가이(가) [절박하게] 거래를 제안한다",
+          "emotionalImpact": {},
+          "timestamp": 15
+        },
+        {
+          "eventId": "event_1767321718115_1vt0uravm",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 16
+        },
+        {
+          "eventId": "event_1767321720064_543ejfur6",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 17
+        },
+        {
+          "eventId": "event_1767321721440_fvv3hgzjc",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 18
+        },
+        {
+          "eventId": "event_1767321722415_bvk8ep8bq",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 19
+        },
+        {
+          "eventId": "event_1767321727380_bmvd1owue",
+          "interpretation": "모험가이(가) [침묵을 지킨다]",
+          "emotionalImpact": {},
+          "timestamp": 20
+        },
+        {
+          "eventId": "event_1767321729643_egk2ka7xs",
+          "interpretation": "모험가이(가) [침묵을 지킨다]",
+          "emotionalImpact": {},
+          "timestamp": 21
+        }
+      ],
+      "beliefs": {},
+      "isPlayer": false
+    },
+    {
+      "id": "char_1767320398621_ptby1j8re",
+      "name": "마르코",
+      "title": "대상인",
+      "personality": {
+        "ambition": 0.8,
+        "loyalty": 0.4,
+        "morality": 0.5,
+        "courage": 0.3,
+        "cunning": 0.8
+      },
+      "emotion": {
+        "trust": 0.5,
+        "fear": 0,
+        "anger": 0,
+        "joy": 0.07134806557659966,
+        "despair": 0
+      },
+      "location": "capital",
+      "resources": 5000,
+      "power": 34,
+      "memory": [
+        {
+          "eventId": "event_1767320487678_fvlyv98zw",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 4
+        },
+        {
+          "eventId": "event_1767320493952_bng4xd38f",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 5
+        },
+        {
+          "eventId": "event_1767320499308_673r2vf5k",
+          "interpretation": "모험가이(가) [절박하게] 친근하게 대화한다",
+          "emotionalImpact": {},
+          "timestamp": 6
+        },
+        {
+          "eventId": "event_1767321676432_2jwtpljnb",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 7
+        },
+        {
+          "eventId": "event_1767321680315_kt0rjfh90",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 8
+        },
+        {
+          "eventId": "event_1767321681967_1zi5uyudl",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 9
+        },
+        {
+          "eventId": "event_1767321685084_ftyfj7z3j",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 10
+        },
+        {
+          "eventId": "event_1767321694303_vjyjujysg",
+          "interpretation": "모험가이(가) [절박하게] 친근하게 대화한다",
+          "emotionalImpact": {},
+          "timestamp": 11
+        },
+        {
+          "eventId": "event_1767321703232_bvjn9cl0t",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 12
+        },
+        {
+          "eventId": "event_1767321705134_po2tz1let",
+          "interpretation": "모험가이(가) [상황을 관찰한다]",
+          "emotionalImpact": {},
+          "timestamp": 13
+        },
+        {
+          "eventId": "event_1767321710519_0zqz7kww8",
+          "interpretation": "모험가이(가) [절박하게] 도움을 제공한다",
+          "emotionalImpact": {},
+          "timestamp": 14
+        },
+        {
+          "eventId": "event_1767321712713_d4c7bybyw",
+          "interpretation": "모험가이(가) [절박하게] 거래를 제안한다",
+          "emotionalImpact": {},
+          "timestamp": 15
+        },
+        {
+          "eventId": "event_1767321718115_1vt0uravm",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 16
+        },
+        {
+          "eventId": "event_1767321718115_1vt0uravm",
+          "interpretation": "소문: 모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 16
+        },
+        {
+          "eventId": "event_1767321720064_543ejfur6",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 17
+        },
+        {
+          "eventId": "event_1767321720064_543ejfur6",
+          "interpretation": "소문: 모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 17
+        },
+        {
+          "eventId": "event_1767321721440_fvv3hgzjc",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 18
+        },
+        {
+          "eventId": "event_1767321722415_bvk8ep8bq",
+          "interpretation": "모험가이(가) [절박하게] 공격한다",
+          "emotionalImpact": {},
+          "timestamp": 19
+        },
+        {
+          "eventId": "event_1767321727380_bmvd1owue",
+          "interpretation": "모험가이(가) [침묵을 지킨다]",
+          "emotionalImpact": {},
+          "timestamp": 20
+        },
+        {
+          "eventId": "event_1767321729643_egk2ka7xs",
+          "interpretation": "모험가이(가) [침묵을 지킨다]",
+          "emotionalImpact": {},
+          "timestamp": 21
+        }
+      ],
+      "beliefs": {},
+      "isPlayer": false
+    },
+    {
+      "id": "char_1767320398621_9jrfupfop",
+      "name": "모험가",
+      "personality": {
+        "ambition": 0.5,
+        "loyalty": 0.5,
+        "morality": 0.5,
+        "courage": 0.5,
+        "cunning": 0.5
+      },
+      "emotion": {
+        "trust": 0.5,
+        "fear": 0,
+        "anger": 0,
+        "joy": 0.07134806557659966,
+        "despair": 0
+      },
+      "location": "village1",
+      "resources": 70,
+      "power": 10,
+      "memory": [],
+      "beliefs": {},
+      "isPlayer": true,
+      "stats": {
+        "maxHp": 100,
+        "currentHp": 15,
+        "maxMp": 50,
+        "currentMp": 50,
+        "attack": 10,
+        "defense": 5,
+        "speed": 10,
+        "critRate": 0.05,
+        "critDamage": 1.5
+      },
+      "level": 1,
+      "experience": 0,
+      "expToNextLevel": 282,
+      "statPoints": 0,
+      "skillPoints": 0,
+      "skills": [],
+      "inventory": [],
+      "equipment": {}
+    }
+  ],
+  "worldState": {
+    "time": 28,
+    "globalState": {
+      "warActive": false,
+      "economyIndex": 1,
+      "plagueActive": false,
+      "season": "spring",
+      "dayOfYear": 29
+    }
+  },
+  "relations": [
+    {
+      "from": "char_1767320398621_4ikrxp63i",
+      "to": "char_1767320398621_ptby1j8re",
+      "trust": 0.4,
+      "fear": 0,
+      "debt": 0
+    },
+    {
+      "from": "char_1767320398621_ptby1j8re",
+      "to": "char_1767320398621_4ikrxp63i",
+      "trust": 0.22,
+      "fear": 0.3,
+      "debt": 0
+    },
+    {
+      "from": "char_1767320398621_ptby1j8re",
+      "to": "char_1767320398621_9jrfupfop",
+      "trust": 0.22,
+      "fear": 0,
+      "debt": 0
+    },
+    {
+      "from": "char_1767320398621_9jrfupfop",
+      "to": "char_1767320398621_4ikrxp63i",
+      "trust": -1,
+      "fear": 1,
+      "debt": 20
+    },
+    {
+      "from": "char_1767320398621_9jrfupfop",
+      "to": "char_1767320398621_ptby1j8re",
+      "trust": 0.35,
+      "fear": 0,
+      "debt": 0
+    }
+  ],
+  "playerLocation": "village1"
+}
